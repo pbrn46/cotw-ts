@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "client"
+		},
+		{
+			"path": "server"
+		},
+		{
+			"name": "root",
+			"path": "."
+		}
+	],
+	"settings": {
+		"jest.disabledWorkspaceFolders": [
+			"root",
+		],
+		"terminal.integrated.cwd": "${workspaceFolder:root}"
+	}
+}

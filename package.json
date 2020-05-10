@@ -1,0 +1,22 @@
+{
+  "name": "cotw2020",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "install:client": "cd client && npm install",
+    "install:server": "cd server && npm install",
+    "postinstall": "run-s install:*",
+    "start": "concurrently --kill-others \"npm run start:server\" \"npm run start:client\"",
+    "start:client": "cd client && npm run start",
+    "start:server": "cd server && npm run start",
+    "build:client": "cd client && npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Boris Wong",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "dependencies": {
+    "concurrently": "^5.1.0",
+    "npm-run-all": "^4.1.5"
+  }
+}
