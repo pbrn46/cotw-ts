@@ -2,6 +2,7 @@ import { PayloadAction, createSlice, createSelector } from '@reduxjs/toolkit'
 import { RootState } from './reducers'
 import { tilePxSizeSelector } from './config'
 import { home } from '../../maps'
+import { getSurroundingPoses } from '../../lib/mapUtil'
 
 
 const initialState = home
@@ -13,10 +14,18 @@ const slice = createSlice({
     setCurrentMap: (state, action: PayloadAction<MapState>) => {
       return action.payload
     },
+    discoverSurroundings: (state, action: PayloadAction<Pos>) => {
+      let surroundingPoses = getSurroundingPoses(action.payload, true)
+      for (let pos of surroundingPoses) {
+        if (pos.x < 0 || pos.y < 0) continue
+        if (!state.discovered[pos.x]) state.discovered[pos.x] = []
+        state.discovered[pos.x][pos.y] = true
+      }
+    }
   },
 })
 
-export const { setCurrentMap } = slice.actions
+export const { setCurrentMap, discoverSurroundings } = slice.actions
 
 export default slice.reducer
 

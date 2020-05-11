@@ -9,6 +9,7 @@ export default function Terrain() {
   const mapPxSize = useSelector(currentMapPxSizeSelector)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const terrainLayer = useSelector(state => state.currentMap.layers.terrain)
+  const discovered = useSelector(state => state.currentMap.discovered)
 
   const draw = useDrawTile(canvasRef.current)
 
@@ -21,19 +22,24 @@ export default function Terrain() {
     const touched: boolean[][] = Array(mapSize.width).fill(null).map(() => Array(mapSize.height).fill(false));
 
     for (let layerTile of terrainLayer) {
-      touched[layerTile.pos.x][layerTile.pos.y] = true
-      draw(layerTile.tileId, layerTile.pos)
+      const { x, y } = layerTile.pos
+      touched[x][y] = true
+      if (discovered[x]?.[y]) {
+        draw(layerTile.tileId, layerTile.pos)
+      }
     }
 
     // Default green
     for (let y = 0; y < mapSize.height; y++) {
       for (let x = 0; x < mapSize.width; x++) {
         if (!touched[x][y]) {
-          draw(289, { x, y })
+          if (discovered[x]?.[y]) {
+            draw(289, { x, y })
+          }
         }
       }
     }
-  }, [draw, mapPxSize.height, mapPxSize.width, mapSize.height, mapSize.width, terrainLayer])
+  }, [discovered, draw, mapPxSize.height, mapPxSize.width, mapSize.height, mapSize.width, terrainLayer])
 
   return <canvas ref={canvasRef} width={mapPxSize.width} height={mapPxSize.height} />
 }

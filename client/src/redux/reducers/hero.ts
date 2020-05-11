@@ -2,6 +2,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { AppThunk } from '../store'
 import { isPassable } from '../../lib/mapUtil'
 import { addMessage } from './messages'
+import { discoverSurroundings } from './currentMap'
 
 type HeroState = {
   pos: Pos,
@@ -52,6 +53,7 @@ export const transposeHero = (transposeBy: Pos): AppThunk => (dispatch, getState
   if (isPassable(targetPos, state.currentMap)) {
     dispatch(incrementHeroTime(2.3))
     dispatch(setHeroPos(targetPos))
+    dispatch(discoverSurroundings(targetPos))
   } else {
     dispatch(addMessage({
       message: "You can't move there.",

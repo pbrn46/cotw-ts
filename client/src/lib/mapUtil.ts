@@ -99,3 +99,17 @@ export function genRect(pos: Pos, size: Size, tileData: Omit<LayerTile, "pos">):
   console.log(out)
   return out
 }
+
+export function getSurroundingPoses(pos: Pos, includeSelf: boolean): Pos[] {
+  return [
+    { x: pos.x, y: pos.y - 1 },
+    { x: pos.x + 1, y: pos.y - 1 },
+    { x: pos.x + 1, y: pos.y },
+    { x: pos.x + 1, y: pos.y + 1 },
+    { x: pos.x, y: pos.y + 1 },
+    { x: pos.x - 1, y: pos.y + 1 },
+    { x: pos.x - 1, y: pos.y },
+    { x: pos.x - 1, y: pos.y - 1 },
+    ...(includeSelf ? [{ x: pos.x, y: pos.y }] : []),
+  ]
+}

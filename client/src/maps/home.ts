@@ -39,4 +39,5 @@ export default {
     sprites: spritesLayer,
     projectiles: [],
   },
+  discovered: [],
 } as MapState

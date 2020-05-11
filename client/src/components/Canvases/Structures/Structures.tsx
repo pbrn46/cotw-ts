@@ -8,6 +8,7 @@ export default function Structures() {
   const mapPxSize = useSelector(currentMapPxSizeSelector)
   const structureLayer = useSelector(state => state.currentMap.layers.structure)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const discovered = useSelector(state => state.currentMap.discovered)
 
   const draw = useDrawTile(canvasRef.current)
 
@@ -16,9 +17,12 @@ export default function Structures() {
     if (!ctx) return
     ctx.clearRect(0, 0, mapPxSize.width, mapPxSize.height)
     for (let layerTile of structureLayer) {
-      draw(layerTile.tileId, layerTile.pos)
+      const { x, y } = layerTile.pos
+      if (discovered[x]?.[y]) {
+        draw(layerTile.tileId, layerTile.pos)
+      }
     }
-  }, [draw, mapPxSize.height, mapPxSize.width, structureLayer])
+  }, [discovered, draw, mapPxSize.height, mapPxSize.width, structureLayer])
 
   return <canvas ref={canvasRef} width={mapPxSize.width} height={mapPxSize.height} />
 }

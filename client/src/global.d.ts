@@ -28,6 +28,7 @@ interface Layers {
 type MapState = {
   size: Size,
   layers: Layers,
+  discovered: boolean[][],
 }
 
 type Severity = "normal" | "warning" | "danger"
