@@ -33,30 +33,30 @@ export function isPassable(pos: Pos, currentMap: MapState): boolean {
 }
 
 
-export function genCastle(pos: Pos, size: Size, gateSide?: Side): LayerTile[] {
-  let out: LayerTile[] = []
+export function genCastle(pos: Pos, size: Size, gateSide?: Side): Pick<Layers, "terrain" | "structure"> {
+  let structure: LayerTile[] = []
 
   // TR corner
-  out.push({ tileId: 41, pos: { x: pos.x + size.width - 1, y: pos.y }, impassable: true, })
+  structure.push({ tileId: 41, pos: { x: pos.x + size.width - 1, y: pos.y }, impassable: true, })
   // BR corner
-  out.push({ tileId: 42, pos: { x: pos.x + size.width - 1, y: pos.y + size.height - 1 }, impassable: true, })
+  structure.push({ tileId: 42, pos: { x: pos.x + size.width - 1, y: pos.y + size.height - 1 }, impassable: true, })
   // BL corner
-  out.push({ tileId: 43, pos: { x: pos.x, y: pos.y + size.height - 1 }, impassable: true, })
+  structure.push({ tileId: 43, pos: { x: pos.x, y: pos.y + size.height - 1 }, impassable: true, })
   // TL corner
-  out.push({ tileId: 44, pos: { x: pos.x, y: pos.y }, impassable: true, })
+  structure.push({ tileId: 44, pos: { x: pos.x, y: pos.y }, impassable: true, })
 
 
   for (let x = pos.x + 1; x < pos.x + size.width - 1; x++) {
-    out.push({ tileId: 45, pos: { x, y: pos.y }, impassable: true, })
+    structure.push({ tileId: 45, pos: { x, y: pos.y }, impassable: true, })
     // Bottom wall
-    out.push({ tileId: 47, pos: { x, y: pos.y + size.height - 1 }, impassable: true, })
+    structure.push({ tileId: 47, pos: { x, y: pos.y + size.height - 1 }, impassable: true, })
   }
 
   for (let y = pos.y + 1; y < pos.y + size.height - 1; y++) {
     // Left wall
-    out.push({ tileId: 48, pos: { x: pos.x, y }, impassable: true, })
+    structure.push({ tileId: 48, pos: { x: pos.x, y }, impassable: true, })
     // Right wall
-    out.push({ tileId: 46, pos: { x: pos.x + size.width - 1, y }, impassable: true, })
+    structure.push({ tileId: 46, pos: { x: pos.x + size.width - 1, y }, impassable: true, })
   }
 
   // Replace wall with gate
@@ -79,13 +79,15 @@ export function genCastle(pos: Pos, size: Size, gateSide?: Side): LayerTile[] {
         gatePos = { x: pos.x + size.height - 1, y: midY }
         break
     }
-    out = [
-      ...out.filter(tile => !isSamePos(tile.pos, gatePos)),
+    structure = [
+      ...structure.filter(tile => !isSamePos(tile.pos, gatePos)),
       { tileId: 7, pos: gatePos, }, // Gate
     ]
   }
 
-  return out
+  const terrain = genRect({ x: pos.x + 1, y: pos.y + 1 }, { width: size.width - 2, height: size.height - 2 }, { tileId: 294 })
+
+  return { structure, terrain }
 }
 
 /** Generate array of tiles to fill a rectangle */
