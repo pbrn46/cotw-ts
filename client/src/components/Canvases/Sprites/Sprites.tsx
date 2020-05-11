@@ -4,7 +4,7 @@ import { currentMapPxSizeSelector } from '../../../redux/reducers/currentMap'
 import { useDrawTile } from '../../../lib/drawUtil'
 
 
-export default function Structures() {
+export default function Sprites() {
   const mapPxSize = useSelector(currentMapPxSizeSelector)
   const spritesLayer = useSelector(state => state.currentMap.layers.sprites)
   const heroPos = useSelector(state => state.hero.pos)

@@ -1,3 +1,4 @@
+type Side = "top" | "bottom" | "left" | "right"
 
 type Size = {
   width: number,
@@ -12,16 +13,12 @@ type Pos = {
 type LayerTile = {
   tileId: number,
   pos: Pos,
+  impassable?: boolean
 }
-
-type StructureLayerTile = LayerTile & {
-  passable: boolean
-}
-
 
 interface Layers {
   terrain: LayerTile[]
-  structure: StructureLayerTile[]
+  structure: LayerTile[]
   items: LayerTile[]
   sprites: LayerTile[]
   projectiles: LayerTile[]
