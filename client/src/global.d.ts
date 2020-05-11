@@ -35,3 +35,14 @@ type Message = {
   message: string
   severity: Severity
 }
+
+
+type SpriteStats = {
+  hp: number,
+  hpMax: number,
+  mp: number,
+  mpMax: number,
+  speed: number,
+  speedMax: number,
+  time: number,
+}

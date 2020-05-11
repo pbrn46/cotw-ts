@@ -18,6 +18,10 @@ const terrainLayer: LayerTile[] = [
   ...genRect({ x: 11, y: 3 }, { width: 7, height: 7 }, { tileId: 293 })
 ]
 
+const itemsLayer: LayerTile[] = [
+  { tileId: 85, pos: { x: 2, y: 3 }, }
+]
+
 const structureLayer: LayerTile[] = [
   ...genCastle({ x: 10, y: 2 }, { width: 9, height: 9 }, "bottom"),
 
@@ -31,7 +35,7 @@ export default {
     terrain: terrainLayer,
     structure: structureLayer,
     traps: [],
-    items: [],
+    items: itemsLayer,
     sprites: spritesLayer,
     projectiles: [],
   },
