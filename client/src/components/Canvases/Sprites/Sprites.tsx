@@ -10,7 +10,7 @@ export default function Sprites() {
   const heroPos = useSelector(state => state.hero.pos)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
-  const draw = useDrawTile(canvasRef.current, "original")
+  const draw = useDrawTile(canvasRef.current)
 
   useEffect(() => {
     const ctx = canvasRef.current?.getContext('2d')

@@ -9,7 +9,7 @@ export default function Structures() {
   const structureLayer = useSelector(state => state.currentMap.layers.structure)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
-  const draw = useDrawTile(canvasRef.current, "original")
+  const draw = useDrawTile(canvasRef.current)
 
   useEffect(() => {
     const ctx = canvasRef.current?.getContext('2d')

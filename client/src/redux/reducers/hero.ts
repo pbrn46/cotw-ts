@@ -1,13 +1,14 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { AppThunk } from '../store'
 import { isPassable } from '../../lib/mapUtil'
+import { addMessage } from './messages'
 
 type HeroState = {
   pos: Pos,
 }
 
 const initialState: HeroState = {
-  pos: { x: 5, y: 5, },
+  pos: { x: 14, y: 5, },
 }
 
 const slice = createSlice({
@@ -42,6 +43,10 @@ export const transposeHero = (transposeBy: Pos): AppThunk => (dispatch, getState
   if (isPassable(targetPos, state.currentMap)) {
     dispatch(setHeroPos(targetPos))
   } else {
+    dispatch(addMessage({
+      message: "You can't move there.",
+      severity: "normal"
+    }))
     // Can detect and handle build entry here
   }
 }

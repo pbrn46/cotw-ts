@@ -1,19 +1,13 @@
-import tilemapOriginal from './png/tilemap-original.png'
-import tilemapTerrain from './png/tilemap-terrain.png'
+import tilemapPng from './png/tilemap.png'
 import { useEffect, useState } from 'react'
 
 export type TilemapType = "original" | "terrain"
 
-const tilemapSrcs: Record<TilemapType, string> = {
-  'original': tilemapOriginal,
-  'terrain': tilemapTerrain,
-}
-
-export function useTilemap(type: TilemapType = "original") {
+export function useTilemap() {
   const [tilemapImage, setTilemapImage] = useState<HTMLImageElement | null>(null)
   useEffect(() => {
     const tmpTilemapImage = new Image()
-    tmpTilemapImage.src = tilemapSrcs[type]
+    tmpTilemapImage.src = tilemapPng
     const imageLoadHandler = () => {
       setTilemapImage(tmpTilemapImage)
     }
@@ -22,7 +16,7 @@ export function useTilemap(type: TilemapType = "original") {
       tmpTilemapImage.removeEventListener('load', imageLoadHandler)
       setTilemapImage(null)
     }
-  }, [type])
+  }, [])
   return tilemapImage
 }
 

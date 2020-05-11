@@ -19,6 +19,7 @@ type LayerTile = {
 interface Layers {
   terrain: LayerTile[]
   structure: LayerTile[]
+  traps: LayerTile[]
   items: LayerTile[]
   sprites: LayerTile[]
   projectiles: LayerTile[]
@@ -27,4 +28,10 @@ interface Layers {
 type MapState = {
   size: Size,
   layers: Layers,
+}
+
+type Severity = "normal" | "warning" | "danger"
+type Message = {
+  message: string
+  severity: Severity
 }

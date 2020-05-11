@@ -1,5 +1,5 @@
 import { tilePosToPx } from "./mapUtil"
-import { getTilemapPosById, useTilemap, TilemapType } from "../assets/tilemap"
+import { getTilemapPosById, useTilemap } from "../assets/tilemap"
 import { useCallback, useMemo } from "react"
 import { useSelector } from "../redux/store"
 
@@ -15,8 +15,8 @@ export function drawTile(
     dPos.x, dPos.y, tilePxSize.width, tilePxSize.height)
 }
 
-export function useDrawTile(canvas: HTMLCanvasElement | null, tilemapType: TilemapType = "original") {
-  const tilemap = useTilemap(tilemapType)
+export function useDrawTile(canvas: HTMLCanvasElement | null) {
+  const tilemap = useTilemap()
   const tilePxSize = useSelector(state => state.config.tilePxSize)
 
   const ctx = useMemo(() => {

@@ -10,7 +10,7 @@ export default function Terrain() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const terrainLayer = useSelector(state => state.currentMap.layers.terrain)
 
-  const draw = useDrawTile(canvasRef.current, "terrain")
+  const draw = useDrawTile(canvasRef.current)
 
   useEffect(() => {
     const ctx = canvasRef.current?.getContext('2d')
@@ -20,7 +20,7 @@ export default function Terrain() {
     // Default green
     for (let y = 0; y < mapSize.height; y++) {
       for (let x = 0; x < mapSize.width; x++) {
-        draw(1, { x, y })
+        draw(289, { x, y })
       }
     }
 

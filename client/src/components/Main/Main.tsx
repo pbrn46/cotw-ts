@@ -10,11 +10,10 @@ import store from '../../redux/store'
 export default function Main() {
   return <>
     <Provider store={store}>
-      <CssBaseline>
-        <Router>
-          <Routes />
-        </Router>
-      </CssBaseline>
+      <CssBaseline />
+      <Router>
+        <Routes />
+      </Router>
     </Provider>
   </>
 }

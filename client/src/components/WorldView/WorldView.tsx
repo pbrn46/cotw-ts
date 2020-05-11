@@ -8,8 +8,10 @@ import { useKeyHandler } from '../../lib/keyHandler'
 export default function WorldView() {
   useKeyHandler()
   return <div className="WorldView">
-    <Terrain />
-    <Structures />
-    <Sprites />
+    <div className="WorldView-Inner">
+      <Terrain />
+      <Structures />
+      <Sprites />
+    </div>
   </div>
 }
