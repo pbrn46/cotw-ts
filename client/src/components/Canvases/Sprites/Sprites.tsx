@@ -9,6 +9,7 @@ export default function Sprites() {
   const spritesLayer = useSelector(state => state.currentMap.layers.sprites)
   const heroPos = useSelector(state => state.hero.pos)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const discovered = useSelector(state => state.currentMap.discovered)
 
   const draw = useDrawTile(canvasRef.current)
 
@@ -17,12 +18,14 @@ export default function Sprites() {
     if (!ctx) return
     ctx.clearRect(0, 0, mapPxSize.width, mapPxSize.height)
     for (let layerTile of spritesLayer) {
-      draw(layerTile.tileId, layerTile.pos)
+      const { x, y } = layerTile.pos
+      if (discovered[x]?.[y]) {
+        draw(layerTile.tileId, layerTile.pos)
+      }
     }
     // Draw hero
     draw(231, heroPos)
-
-  }, [draw, heroPos, mapPxSize.height, mapPxSize.width, spritesLayer])
+  }, [discovered, draw, heroPos, mapPxSize.height, mapPxSize.width, spritesLayer])
 
   return <canvas ref={canvasRef} width={mapPxSize.width} height={mapPxSize.height} />
 }
