@@ -18,10 +18,6 @@ const slice = createSlice({
     setHero: (state, action: PayloadAction<HeroState>) => {
       return action.payload
     },
-    // transposeHero: (state, action: PayloadAction<Pos>) => {
-    //   state.pos.x = state.pos.x + action.payload.x
-    //   state.pos.y = state.pos.y + action.payload.y
-    // },
     setHeroPos: (state, action: PayloadAction<Pos>) => {
       state.pos = action.payload
     }

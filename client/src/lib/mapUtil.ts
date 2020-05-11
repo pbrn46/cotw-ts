@@ -87,3 +87,15 @@ export function genCastle(pos: Pos, size: Size, gateSide?: Side): LayerTile[] {
 
   return out
 }
+
+/** Generate array of tiles to fill a rectangle */
+export function genRect(pos: Pos, size: Size, tileData: Omit<LayerTile, "pos">): LayerTile[] {
+  let out: LayerTile[] = []
+  for (let y = pos.y; y < pos.y + size.height; y++) {
+    for (let x = pos.x; x < pos.x + size.width; x++) {
+      out.push({ ...tileData, pos: { x, y } })
+    }
+  }
+  console.log(out)
+  return out
+}
