@@ -59,6 +59,6 @@ export const transposeHero = (transposeBy: Pos): AppThunk => (dispatch, getState
       message: "You can't move there.",
       severity: "normal"
     }))
-    // Can detect and handle build entry here
+    // Can detect and handle door or cross map entry here
   }
 }
