@@ -1,3 +1,27 @@
+import _ from 'lodash'
+import { getTilemapInfoByKey } from '../assets/tilemap'
+
+
+export function Pos(x: number, y: number): Pos {
+  return { x, y }
+}
+
+export function Size(width: number, height: number): Size {
+  return { width, height }
+}
+
+export const blankMapState: MapState = {
+  size: { width: 1, height: 1 },
+  layers: {
+    terrain: [],
+    structure: [],
+    traps: [],
+    items: [],
+    sprites: [],
+    projectiles: [],
+  },
+  discovered: [],
+}
 
 export function tilePosToPx(pos: Pos, tileSize: Size): Pos {
   return {
@@ -85,7 +109,10 @@ export function genCastle(pos: Pos, size: Size, gateSide?: Side): Pick<Layers, "
     ]
   }
 
-  const terrain = genRect({ x: pos.x + 1, y: pos.y + 1 }, { width: size.width - 2, height: size.height - 2 }, { tileId: 294 })
+  const terrain = genRect(
+    Pos(pos.x + 1, pos.y + 1),
+    Size(size.width - 2, size.height - 2),
+    { tileId: 294 })
 
   return { structure, terrain }
 }
@@ -114,4 +141,33 @@ export function getSurroundingPoses(pos: Pos, includeSelf: boolean): Pos[] {
     { x: pos.x - 1, y: pos.y - 1 },
     ...(includeSelf ? [{ x: pos.x, y: pos.y }] : []),
   ]
+}
+
+export function getBlankMapState(): MapState {
+  return _.cloneDeep(blankMapState)
+}
+
+
+export function genDungeonRoom(pos: Pos, size: Size): Pick<Layers, "terrain"> {
+  const terrain: LayerTile[] = []
+  const floorTileId = getTilemapInfoByKey("DUNGEON_FLOOR")?.tileId
+  if (!floorTileId) throw new Error("Invalid tile key")
+  for (let y = pos.y; y < pos.y + size.height; y++) {
+    for (let x = pos.x; x < pos.x + size.width; x++) {
+      terrain.push({ tileId: floorTileId, pos: { x, y }, })
+    }
+  }
+
+  return { terrain }
+}
+
+export function genMap(size: Size): MapState {
+  // const { width, height } = size
+  const newMap: MapState = getBlankMapState()
+  newMap.size = { ...size }
+  // const terrainTileIds: (number | null)[][] = Array(width).fill(null).map(() => Array(height).fill(null));
+  const room1 = genDungeonRoom(Pos(2, 2), Size(20, 20))
+  newMap.layers.terrain = room1.terrain
+
+  return newMap
 }

@@ -25,10 +25,12 @@ interface Layers {
   projectiles: LayerTile[]
 }
 
+type Discovered = boolean[][]
+
 type MapState = {
   size: Size,
   layers: Layers,
-  discovered: boolean[][],
+  discovered: Discovered,
 }
 
 type Severity = "normal" | "warning" | "danger"

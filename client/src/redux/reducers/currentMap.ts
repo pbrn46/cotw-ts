@@ -2,10 +2,11 @@ import { PayloadAction, createSlice, createSelector } from '@reduxjs/toolkit'
 import { RootState } from './reducers'
 import { tilePxSizeSelector } from './config'
 import { home } from '../../maps'
-import { getSurroundingPoses } from '../../lib/mapUtil'
+import { getSurroundingPoses, getBlankMapState } from '../../lib/mapUtil'
+import { AppThunk } from '../store'
 
 
-const initialState = home
+const initialState: MapState = getBlankMapState()
 
 const slice = createSlice({
   name: 'currentMap',
@@ -14,7 +15,10 @@ const slice = createSlice({
     setCurrentMap: (state, action: PayloadAction<MapState>) => {
       return action.payload
     },
-    discoverSurroundings: (state, action: PayloadAction<Pos>) => {
+    setDiscovered: (state, action: PayloadAction<Discovered>) => {
+      state.discovered = action.payload
+    },
+    discoverAtPos: (state, action: PayloadAction<Pos>) => {
       let surroundingPoses = getSurroundingPoses(action.payload, true)
       for (let pos of surroundingPoses) {
         if (pos.x < 0 || pos.y < 0) continue
@@ -25,7 +29,7 @@ const slice = createSlice({
   },
 })
 
-export const { setCurrentMap, discoverSurroundings } = slice.actions
+export const { setCurrentMap, setDiscovered, discoverAtPos } = slice.actions
 
 export default slice.reducer
 
@@ -42,3 +46,12 @@ export const currentMapPxSizeSelector = createSelector(
     } as Size
   }
 )
+
+export const discoverSurroundings = (centerPos?: Pos): AppThunk => (dispatch, getState) => {
+  const curPos = centerPos ?? getState().hero.pos
+  dispatch(discoverAtPos(curPos))
+}
+
+export const loadMap = (): AppThunk => (dispatch) => {
+  dispatch(setCurrentMap(home))
+}

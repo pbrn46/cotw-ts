@@ -1,8 +1,19 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Button, ButtonGroup } from '@material-ui/core'
+import { useDispatch, useSelector } from '../../redux/store'
+import { discoverSurroundings, setCurrentMap } from '../../redux/reducers/currentMap'
+import { genMap, Size } from '../../lib/mapUtil'
 
 
 export default function Top() {
+  const dispatch = useDispatch()
+
+  const heroPos = useSelector(state => state.hero.pos)
+  const handleTestClick = useCallback(() => {
+    dispatch(setCurrentMap(genMap(Size(50, 50))))
+    dispatch(discoverSurroundings(heroPos))
+  }, [dispatch, heroPos])
+
   return <div>
     <ButtonGroup>
       <Button variant="outlined">Get</Button>
@@ -24,5 +35,8 @@ export default function Top() {
       <Button>8</Button>
       <Button>9</Button>
     </ButtonGroup>
+    <Button
+      onClick={handleTestClick}
+    >Test</Button>
   </div>
 }
