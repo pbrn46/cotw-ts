@@ -16,8 +16,13 @@ type LayerTile = {
   impassable?: boolean
 }
 
+type TerrainLayerTile = LayerTile & {
+  isLit?: boolean
+  isRoom?: boolean
+}
+
 interface Layers {
-  terrain: LayerTile[]
+  terrain: TerrainLayerTile[]
   structure: LayerTile[]
   traps: LayerTile[]
   items: LayerTile[]

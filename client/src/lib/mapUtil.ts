@@ -43,6 +43,7 @@ export function isSamePos(a: Pos, b: Pos) {
 }
 
 export function isPassable(pos: Pos, currentMap: MapState): boolean {
+  if (!inBounds(pos, currentMap.size)) return false
   for (let tile of currentMap.layers.terrain) {
     if (tile.impassable && isSamePos(tile.pos, pos)) {
       return false
@@ -109,20 +110,20 @@ export function genCastle(pos: Pos, size: Size, gateSide?: Side): Pick<Layers, "
     ]
   }
 
-  const terrain = genRect(
+  const terrain = genRect<TerrainLayerTile>(
     Pos(pos.x + 1, pos.y + 1),
     Size(size.width - 2, size.height - 2),
-    { tileId: 294 })
+    { tileId: 294, isLit: true, isRoom: true, })
 
   return { structure, terrain }
 }
 
 /** Generate array of tiles to fill a rectangle */
-export function genRect(pos: Pos, size: Size, tileData: Omit<LayerTile, "pos">): LayerTile[] {
-  let out: LayerTile[] = []
+export function genRect<T extends LayerTile>(pos: Pos, size: Size, tileData: Omit<T, "pos">): T[] {
+  let out: T[] = []
   for (let y = pos.y; y < pos.y + size.height; y++) {
     for (let x = pos.x; x < pos.x + size.width; x++) {
-      out.push({ ...tileData, pos: { x, y } })
+      out.push({ ...tileData, pos: { x, y } } as T)
     }
   }
   console.log(out)
@@ -148,13 +149,13 @@ export function getBlankMapState(): MapState {
 }
 
 
-export function genDungeonRoom(pos: Pos, size: Size): Pick<Layers, "terrain"> {
-  const terrain: LayerTile[] = []
+export function genDungeonRoom(pos: Pos, size: Size, isLit: boolean = false): Pick<Layers, "terrain"> {
+  const terrain: TerrainLayerTile[] = []
   const floorTileId = getTilemapInfoByKey("DUNGEON_FLOOR")?.tileId
   if (!floorTileId) throw new Error("Invalid tile key")
   for (let y = pos.y; y < pos.y + size.height; y++) {
     for (let x = pos.x; x < pos.x + size.width; x++) {
-      terrain.push({ tileId: floorTileId, pos: { x, y }, })
+      terrain.push({ tileId: floorTileId, pos: { x, y }, isRoom: true, isLit })
     }
   }
 
@@ -170,4 +171,22 @@ export function genMap(size: Size): MapState {
   newMap.layers.terrain = room1.terrain
 
   return newMap
+}
+
+
+export function make2dArray<T extends any>(size: Size, defaultValue: T): T[][] {
+  return Array(size.width).fill(null).map(() => Array(size.height).fill(defaultValue));
+}
+
+
+export function tilesAtPos<T extends LayerTile>(layerTiles: T[], pos: Pos): T[] {
+  return layerTiles.filter(tile => isSamePos(tile.pos, pos))
+}
+
+// Check whether pos is in bounds of 0,0 to size
+export function inBounds(pos: Pos, size: Size): boolean {
+  return pos.x >= 0
+    && pos.y >= 0
+    && pos.x < size.width
+    && pos.y < size.width
 }

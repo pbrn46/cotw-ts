@@ -11,7 +11,7 @@ type HeroState = {
 }
 
 const initialState: HeroState = {
-  pos: { x: 14, y: 5, },
+  pos: { x: 14, y: 15, },
   stats: {
     hp: 10,
     hpMax: 10,
