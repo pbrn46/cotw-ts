@@ -186,5 +186,5 @@ export function inBounds(pos: Pos, size: Size): boolean {
   return pos.x >= 0
     && pos.y >= 0
     && pos.x < size.width
-    && pos.y < size.width
+    && pos.y < size.height
 }
