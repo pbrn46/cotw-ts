@@ -3,6 +3,7 @@ import { Button, ButtonGroup } from '@material-ui/core'
 import { useDispatch, useSelector } from '../../redux/store'
 import { discoverSurroundings, setCurrentMap } from '../../redux/reducers/currentMap'
 import { genMap, Size } from '../../lib/mapUtil'
+import { toggleShroud } from '../../redux/reducers/config'
 
 
 export default function Top() {
@@ -38,5 +39,8 @@ export default function Top() {
     <Button
       onClick={handleTestClick}
     >Test</Button>
+    <Button
+      onClick={e => dispatch(toggleShroud())}
+    >Toggle Shroud</Button>
   </div>
 }
