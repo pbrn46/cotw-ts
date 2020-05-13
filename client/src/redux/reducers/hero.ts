@@ -44,7 +44,7 @@ export const { setHero, setHeroPos, incrementHeroTime } = slice.actions
 export default slice.reducer
 
 
-export const transposeHero = (transposeBy: Pos): AppThunk => (dispatch, getState) => {
+export const transposeHero = (transposeBy: Pos): AppThunk<boolean> => (dispatch, getState) => {
   const state = getState()
   const heroPos = state.hero.pos
   const targetPos = {
@@ -57,11 +57,13 @@ export const transposeHero = (transposeBy: Pos): AppThunk => (dispatch, getState
       dispatch(setHeroPos(targetPos))
       dispatch(discoverSurroundings(targetPos))
     })
+    return true
   } else {
     dispatch(addMessage({
       message: "You can't move there.",
       severity: "normal"
     }))
+    return false
     // Can detect and handle door or cross map entry here
   }
 }
