@@ -89,7 +89,6 @@ export function genCastle(pos: Pos, size: Size, gateSide?: Side): Pick<Layers, "
     let gatePos: Pos = { x: -1, y: -1 }
     const midX = Math.floor(((pos.x * 2) + size.width) / 2)
     const midY = Math.floor(((pos.y * 2) + size.height) / 2)
-    console.log(midX, midY)
     switch (gateSide) {
       case "top":
         gatePos = { x: midX, y: pos.y }
@@ -126,7 +125,6 @@ export function genRect<T extends LayerTile>(pos: Pos, size: Size, tileData: Omi
       out.push({ ...tileData, pos: { x, y } } as T)
     }
   }
-  console.log(out)
   return out
 }
 

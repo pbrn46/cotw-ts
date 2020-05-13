@@ -34,7 +34,6 @@ export function useKeyHandler() {
       },
     }
     const handleKeyDown = (e: KeyboardEvent) => {
-      console.log(e.key)
       const handler = handlers[e.key]
       if (handler) {
         e.stopPropagation()
