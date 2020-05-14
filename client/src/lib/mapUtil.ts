@@ -160,17 +160,63 @@ export function genDungeonRoom(pos: Pos, size: Size, isLit: boolean = false): Pi
   return { terrain }
 }
 
-export function genMap(size: Size): MapState {
-  // const { width, height } = size
-  const newMap: MapState = getBlankMapState()
-  newMap.size = { ...size }
-  // const terrainTileIds: (number | null)[][] = Array(width).fill(null).map(() => Array(height).fill(null));
-  const room1 = genDungeonRoom(Pos(2, 2), Size(20, 20))
-  newMap.layers.terrain = room1.terrain
-
-  return newMap
+export function randomSize(minSize: Size, maxSize: Size): Size {
+  return Size(
+    Math.floor((Math.random() * (maxSize.width - minSize.width + 1)) + minSize.width),
+    Math.floor((Math.random() * (maxSize.height - minSize.height + 1)) + minSize.height),
+  )
 }
 
+export function randomPos(minPos: Pos, maxPos: Pos): Pos {
+  return Pos(
+    Math.floor((Math.random() * (maxPos.x - minPos.x + 1)) + minPos.x),
+    Math.floor((Math.random() * (maxPos.y - minPos.y + 1)) + minPos.y),
+  )
+}
+
+export function isPosTouched(pos: Pos, touched: boolean[][]) {
+  return touched[pos.x][pos.y]
+}
+
+export function getSurroundingPosesArray(layer: LayerTile[], size: Size) {
+  const touched = make2dArray(size, false)
+  layer.forEach(tile => touched[tile.pos.x][tile.pos.y] = true)
+
+  return layer.reduce<Pos[]>((acc, tile) => {
+    const surroundingPoses = getSurroundingPoses(tile.pos, false)
+    for (let surroundingPos of surroundingPoses) {
+      if (touched[surroundingPos.x][surroundingPos.y]) continue
+      touched[surroundingPos.x][surroundingPos.y] = true
+      acc.push(surroundingPos)
+    }
+    return acc
+  }, [])
+}
+
+export function genMap(size: Size): MapState {
+  const newMap: MapState = getBlankMapState()
+  newMap.size = { ...size }
+
+  const touched = make2dArray(size, false)
+
+  let roomCount = 0
+  let tryCount = 0
+  while (roomCount < 10 && tryCount < 1000) {
+    tryCount++
+    const roomSize = randomSize(Size(3, 3), Size(10, 10))
+    const roomPos = randomPos(
+      Pos(1, 1),
+      Pos(size.width - roomSize.width - 1, size.height - roomSize.height - 1))
+    const roomLayers = genDungeonRoom(roomPos, roomSize)
+    // If room overlaps
+    if (roomLayers.terrain.some(tile => touched[tile.pos.x][tile.pos.y])) continue
+    roomLayers.terrain.forEach(tile => touched[tile.pos.x][tile.pos.y] = true)
+    getSurroundingPosesArray(roomLayers.terrain, size).forEach(pos => touched[pos.x][pos.y] = true)
+    newMap.layers.terrain = [...newMap.layers.terrain, ...roomLayers.terrain]
+    roomCount++
+  }
+  return newMap
+}
 
 export function make2dArray<T extends any>(size: Size, defaultValue: T): T[][] {
   return Array(size.width).fill(null).map(() => Array(size.height).fill(defaultValue));

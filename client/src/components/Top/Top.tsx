@@ -1,19 +1,16 @@
 import React, { useCallback } from 'react'
 import { Button, ButtonGroup } from '@material-ui/core'
-import { useDispatch, useSelector } from '../../redux/store'
-import { discoverSurroundings, setCurrentMap } from '../../redux/reducers/currentMap'
-import { genMap, Size } from '../../lib/mapUtil'
+import { useDispatch } from '../../redux/store'
 import { toggleShroud } from '../../redux/reducers/config'
+import { debugTest1 } from "../../redux/reducers/debug"
 
 
 export default function Top() {
   const dispatch = useDispatch()
 
-  const heroPos = useSelector(state => state.hero.pos)
   const handleTestClick = useCallback(() => {
-    dispatch(setCurrentMap(genMap(Size(50, 50))))
-    dispatch(discoverSurroundings(heroPos))
-  }, [dispatch, heroPos])
+    dispatch(debugTest1())
+  }, [dispatch])
 
   return <div>
     <ButtonGroup>

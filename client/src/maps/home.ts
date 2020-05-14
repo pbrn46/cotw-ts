@@ -1,4 +1,4 @@
-import { genCastle } from "../lib/mapUtil"
+import { genCastle, make2dArray } from "../lib/mapUtil"
 
 
 const castle = genCastle({ x: 10, y: 2 }, { width: 9, height: 9 }, "bottom")
@@ -31,8 +31,10 @@ const structureLayer: LayerTile[] = [
   { tileId: 5, pos: { x: 14, y: 4 }, },
 ]
 
+const mapSize: Size = { width: 80, height: 40 }
+
 export default {
-  size: { width: 80, height: 40 },
+  size: mapSize,
   layers: {
     terrain: terrainLayer,
     structure: structureLayer,
@@ -41,5 +43,5 @@ export default {
     sprites: spritesLayer,
     projectiles: [],
   },
-  discovered: [],
+  discovered: make2dArray(mapSize, true),
 } as MapState
