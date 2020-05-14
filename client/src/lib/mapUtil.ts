@@ -209,7 +209,7 @@ export function genMap(size: Size, rooms: number): MapState {
   let tryCount = 0
   while (roomCount < rooms && tryCount < rooms * 10) {
     tryCount++
-    const roomSize = randomSize(Size(3, 3), Size(10, 10))
+    const roomSize = randomSize(Size(4, 4), Size(10, 10))
     const roomPos = randomPos(
       Pos(1, 1),
       Pos(size.width - roomSize.width - 1, size.height - roomSize.height - 1))
@@ -267,4 +267,28 @@ export function fillRemaining(size: Size, layer: LayerTile[], tile: Omit<LayerTi
     }
   }
   return newLayer
+}
+
+
+// Returns all possible poses from specific size
+export function getPosesFromSize(size: Size): Pos[] {
+  const poses: Pos[] = []
+  for (let y = 0; y < size.height; y++) {
+    for (let x = 0; x < size.width; x++) {
+      poses.push(Pos(x, y))
+    }
+  }
+  return poses
+}
+// Gets random passable position or -1, -1 if no positions possible
+export function getRandomPassablePos(map: MapState) {
+  // Or create an array of all possible poses first
+  const poses = getPosesFromSize(map.size)
+  while (poses.length > 0) {
+    const pos = poses.splice(Math.floor(Math.random() * poses.length), 1)[0]
+    if (isPassable(pos, map)) {
+      return pos
+    }
+  }
+  return Pos(-1, -1)
 }

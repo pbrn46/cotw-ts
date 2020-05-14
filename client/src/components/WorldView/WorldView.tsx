@@ -4,7 +4,6 @@ import { useScrollWatcher } from '../../lib/scroll'
 import { useKeyHandler } from '../../lib/keyHandler'
 import CanvasLayer from '../CanvasLayer'
 import { useSelector } from '../../redux/store'
-import { getTilemapInfoByKey } from '../../assets/tilemap'
 
 export default function WorldView() {
   const scrollRef = useRef<HTMLDivElement | null>(null)

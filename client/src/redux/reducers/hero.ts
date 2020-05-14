@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { AppThunk } from '../store'
-import { isPassable } from '../../lib/mapUtil'
+import { isPassable, getRandomPassablePos, inBounds } from '../../lib/mapUtil'
 import { addMessage } from './messages'
 import { discoverSurroundings } from './currentMap'
 import { batch } from 'react-redux'
@@ -65,5 +65,14 @@ export const transposeHero = (transposeBy: Pos): AppThunk<boolean> => (dispatch,
     }))
     return false
     // Can detect and handle door or cross map entry here
+  }
+}
+
+export const randomHeroPos = (): AppThunk => (dispatch, getState) => {
+  const state = getState()
+  const pos = getRandomPassablePos(state.currentMap)
+  if (inBounds(pos, state.currentMap.size)) {
+    dispatch(setHeroPos(pos))
+    dispatch(discoverSurroundings(pos))
   }
 }
