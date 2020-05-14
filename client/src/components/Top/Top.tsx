@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import { Button, ButtonGroup } from '@material-ui/core'
 import { useDispatch } from '../../redux/store'
-import { toggleShroud } from '../../redux/reducers/config'
+import { cycleShroudMode } from '../../redux/reducers/config'
 import { debugTest1 } from "../../redux/reducers/debug"
 
 
@@ -37,7 +37,7 @@ export default function Top() {
       onClick={handleTestClick}
     >Test</Button>
     <Button
-      onClick={e => dispatch(toggleShroud())}
-    >Toggle Shroud</Button>
+      onClick={e => dispatch(cycleShroudMode())}
+    >Cycle Shroud</Button>
   </div>
 }

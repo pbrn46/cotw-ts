@@ -13,7 +13,7 @@ export default React.memo(function CanvasLayer({ layer }: CanvasLayerProps) {
   const mapPxSize = useSelector(currentMapPxSizeSelector)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const discovered = useSelector(state => state.currentMap.discovered)
-  const shrouded = useSelector(state => state.config.shrouded)
+  const shroudMode = useSelector(state => state.config.srhoudMode)
 
   const draw = useDrawTile(canvasRef.current)
 
@@ -25,11 +25,18 @@ export default React.memo(function CanvasLayer({ layer }: CanvasLayerProps) {
     for (let layerTile of layer) {
       if (!inBounds(layerTile.pos, mapSize)) continue
       const { x, y } = layerTile.pos
-      if (!shrouded || discovered[x]?.[y]) {
+      if (shroudMode === "visible" || discovered[x]?.[y]) {
         draw(layerTile.tileId, layerTile.pos)
+      } else {
+        if (shroudMode === "alpha") {
+          ctx.save()
+          ctx.globalAlpha = 0.3
+          draw(layerTile.tileId, layerTile.pos)
+          ctx.restore()
+        }
       }
     }
-  }, [discovered, draw, layer, mapPxSize.height, mapPxSize.width, mapSize, shrouded])
+  }, [discovered, draw, layer, mapPxSize.height, mapPxSize.width, mapSize, shroudMode])
 
   return <canvas ref={canvasRef} width={mapPxSize.width} height={mapPxSize.height} />
 })

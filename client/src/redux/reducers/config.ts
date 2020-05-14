@@ -4,12 +4,12 @@ import { AppThunk } from '../store'
 
 type ConfigState = {
   tilePxSize: Size,
-  shrouded: boolean,
+  srhoudMode: ShroudMode,
 }
 
 const initialState: ConfigState = {
   tilePxSize: { width: 32, height: 32 },
-  shrouded: true,
+  srhoudMode: "hidden",
 }
 
 const slice = createSlice({
@@ -19,18 +19,31 @@ const slice = createSlice({
     setConfig: (state, action: PayloadAction<ConfigState>) => {
       return action.payload
     },
-    setShrouded: (state, action: PayloadAction<boolean>) => {
-      state.shrouded = action.payload
+    setShroudMode: (state, action: PayloadAction<ShroudMode>) => {
+      state.srhoudMode = action.payload
     }
   },
 })
 
-export const { setConfig, setShrouded } = slice.actions
+export const { setConfig, setShroudMode } = slice.actions
 
 export default slice.reducer
 
 export const tilePxSizeSelector = (state: RootState) => state.config.tilePxSize
 
-export const toggleShroud = (): AppThunk => (dispatch, getState) => {
-  dispatch(setShrouded(!getState().config.shrouded))
+export const cycleShroudMode = (): AppThunk => (dispatch, getState) => {
+  let nextMode: ShroudMode
+  switch (getState().config.srhoudMode) {
+    case "alpha":
+      nextMode = "hidden"
+      break
+    case "hidden":
+      nextMode = "visible"
+      break
+    case "visible":
+    default:
+      nextMode = "alpha"
+      break
+  }
+  dispatch(setShroudMode(nextMode))
 }

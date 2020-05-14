@@ -58,3 +58,5 @@ type SpriteStats = {
   speedMax: number,
   time: number,
 }
+
+type ShroudMode = "hidden" | "visible" | "alpha"
