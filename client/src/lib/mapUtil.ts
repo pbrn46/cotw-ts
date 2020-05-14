@@ -10,6 +10,10 @@ export function Size(width: number, height: number): Size {
   return { width, height }
 }
 
+export function make2dArray<T extends any>(size: Size, defaultValue: T): T[][] {
+  return Array(size.width).fill(null).map(() => Array(size.height).fill(defaultValue));
+}
+
 export const blankMapState: MapState = {
   size: { width: 1, height: 1 },
   layers: {
@@ -133,16 +137,18 @@ export function genRect<T extends LayerTile>(pos: Pos, size: Size, tileData: Omi
   return out
 }
 
-export function getSurroundingPoses(pos: Pos, includeSelf: boolean): Pos[] {
+export function getSurroundingPoses(pos: Pos, includeSelf: boolean, includeDiagonals: boolean = true): Pos[] {
   return [
     { x: pos.x, y: pos.y - 1 },
-    { x: pos.x + 1, y: pos.y - 1 },
     { x: pos.x + 1, y: pos.y },
-    { x: pos.x + 1, y: pos.y + 1 },
     { x: pos.x, y: pos.y + 1 },
-    { x: pos.x - 1, y: pos.y + 1 },
     { x: pos.x - 1, y: pos.y },
-    { x: pos.x - 1, y: pos.y - 1 },
+    ...(includeDiagonals ? [
+      { x: pos.x + 1, y: pos.y - 1 },
+      { x: pos.x + 1, y: pos.y + 1 },
+      { x: pos.x - 1, y: pos.y + 1 },
+      { x: pos.x - 1, y: pos.y - 1 },
+    ] : []),
     ...(includeSelf ? [{ x: pos.x, y: pos.y }] : []),
   ]
 }
@@ -181,12 +187,12 @@ export function isPosTouched(pos: Pos, touched: boolean[][]) {
   return touched[pos.x][pos.y]
 }
 
-export function getSurroundingPosesArray(layer: LayerTile[], size: Size) {
+export function getSurroundingPosesArray(layer: LayerTile[], size: Size, includeDiagonals: boolean = true) {
   const touched = make2dArray(size, false)
   layer.forEach(tile => touched[tile.pos.x][tile.pos.y] = true)
 
   return layer.reduce<Pos[]>((acc, tile) => {
-    const surroundingPoses = getSurroundingPoses(tile.pos, false)
+    const surroundingPoses = getSurroundingPoses(tile.pos, false, includeDiagonals)
     for (let surroundingPos of surroundingPoses) {
       if (touched[surroundingPos.x][surroundingPos.y]) continue
       touched[surroundingPos.x][surroundingPos.y] = true
@@ -196,11 +202,11 @@ export function getSurroundingPosesArray(layer: LayerTile[], size: Size) {
   }, [])
 }
 
-export function genDungeonRooms(size: Size, rooms: number): TerrainLayerTile[][] {
+export function genDungeonRooms(mapSize: Size, rooms: number): TerrainLayerTile[][] {
   let newLayers: TerrainLayerTile[][] = []
 
-  const roomTouched = make2dArray(size, false)
-  const terrainTouched = make2dArray(size, false)
+  const roomTouched = make2dArray(mapSize, false)
+  const terrainTouched = make2dArray(mapSize, false)
 
   let roomCount = 0
   let tryCount = 0
@@ -209,7 +215,7 @@ export function genDungeonRooms(size: Size, rooms: number): TerrainLayerTile[][]
     const roomSize = randomSize(Size(4, 4), Size(10, 10))
     const roomPos = randomPos(
       Pos(1, 1),
-      Pos(size.width - roomSize.width - 1, size.height - roomSize.height - 1))
+      Pos(mapSize.width - roomSize.width - 1, mapSize.height - roomSize.height - 1))
     const roomLayer = genDungeonRoom(roomPos, roomSize)
     // If room overlaps
     if (roomLayer.some(tile => roomTouched[tile.pos.x][tile.pos.y])) continue
@@ -217,7 +223,7 @@ export function genDungeonRooms(size: Size, rooms: number): TerrainLayerTile[][]
       roomTouched[tile.pos.x][tile.pos.y] = true
       terrainTouched[tile.pos.x][tile.pos.y] = true
     })
-    getSurroundingPosesArray(roomLayer, size).forEach(pos => roomTouched[pos.x][pos.y] = true)
+    getSurroundingPosesArray(roomLayer, mapSize).forEach(pos => roomTouched[pos.x][pos.y] = true)
     newLayers.push(roomLayer)
     // newLayer = [...newLayer, ...roomLayer]
     roomCount++
@@ -226,22 +232,103 @@ export function genDungeonRooms(size: Size, rooms: number): TerrainLayerTile[][]
   return newLayers
 }
 
-export function genMap(size: Size, rooms: number): MapState {
-  const newMap: MapState = getBlankMapState()
-  newMap.size = { ...size }
+export function genDungeonPaths(mapSize: Size, dungeonRooms: TerrainLayerTile[][]): TerrainLayerTile[] {
+  let newLayer: TerrainLayerTile[] = []
+  const terrainTouched = make2dArray(mapSize, false)
+  let pathTouched = make2dArray(mapSize, false)
+  dungeonRooms.forEach(room => room.forEach(tile => terrainTouched[tile.pos.x][tile.pos.y] = true))
 
-  const dungeonRooms = genDungeonRooms(size, rooms)
+  // Create a path for each room
+  for (let i = 0; i < dungeonRooms.length; i++) {
+    const newPathTouched = _.cloneDeep(pathTouched)
+    const room = dungeonRooms[i]
+    const roomSurrounding = getSurroundingPosesArray(room, mapSize, false)
+    const startPos = roomSurrounding[Math.floor(Math.random() * roomSurrounding.length)]
+    let targetRoomIndex = Math.floor(Math.random() * (dungeonRooms.length - 1))
+    if (targetRoomIndex >= i) targetRoomIndex++
+    const targetRoom = dungeonRooms[targetRoomIndex]
+    // const targetPos = targetRoom[Math.floor(Math.random() * targetRoom.length)].pos
+
+    const floorTile = getTilemapInfoByKey("DUNGEON_FLOOR")
+    const doorTile = getTilemapInfoByKey("DOOR_CLOSED")
+
+    const roomStartPos = getSurroundingPoses(startPos, false)
+      .find(pos => inBounds(pos, mapSize) && terrainTouched[pos.x][pos.y])
+    const startDirection = roomStartPos ? getDirection(roomStartPos, startPos) : "none"
+
+    const doorChance = 0.35
+    const doorOrFloorTile = Math.random() < doorChance
+      ? { tileId: doorTile.tileId, pos: startPos }
+      : { tileId: floorTile.tileId, pos: startPos }
+    newLayer.push(doorOrFloorTile)
+    let curPos = incrementPosByDirection(startPos, startDirection)
+    while (inBounds(
+      Pos(curPos.x - 1, curPos.y - 1),
+      Size(mapSize.width - 2, mapSize.height - 2))
+      && !terrainTouched[curPos.x][curPos.y]
+      && !pathTouched[curPos.x][curPos.y]
+    ) {
+      newLayer.push({ tileId: floorTile.tileId, pos: curPos })
+      newPathTouched[curPos.x][curPos.y] = true
+
+      const surroundingPoses = getSurroundingPoses(curPos, false)
+      const prevPathTouched = pathTouched
+      if (surroundingPoses.some(pos => prevPathTouched[pos.x][pos.y])) {
+        break
+      }
+      curPos = incrementPosByDirection(curPos, startDirection)
+    }
+
+    pathTouched = newPathTouched
+    // console.log(startDirection, roomStartPos, startPos, targetPos)
+
+
+
+    // if (startPos.x === targetPos.x) {
+    //   const x = startPos.x
+    //   if (startPos.y < targetPos.y) {
+    //     for (let y = startPos.y; y < targetPos.y; y++) {
+    //       newLayer.push({ tileId: floorTile.tileId, pos: Pos(x, y) })
+    //     }
+    //   } else {
+    //     for (let y = startPos.y; y > targetPos.y; y--) {
+    //       newLayer.push({ tileId: floorTile.tileId, pos: Pos(x, y) })
+    //     }
+    //   }
+    // }
+    // else if (startPos.y === targetPos.y) {
+    //   const y = startPos.y
+    //   if (startPos.x < targetPos.x) {
+    //     for (let x = startPos.x; x < targetPos.x; x++) {
+    //       newLayer.push({ tileId: floorTile.tileId, pos: Pos(x, y) })
+    //     }
+    //   } else {
+    //     for (let x = startPos.x; x > targetPos.x; x--) {
+    //       newLayer.push({ tileId: floorTile.tileId, pos: Pos(x, y) })
+    //     }
+    //   }
+    // }
+
+    // newLayer.push({ tileId: getTilemapInfoByKey("DUNGEON_FLOOR").tileId, pos: startPos })
+  }
+  return newLayer
+}
+
+export function genMap(mapSize: Size, roomCount: number): MapState {
+  const newMap: MapState = getBlankMapState()
+  newMap.size = { ...mapSize }
+
+  const dungeonRooms = genDungeonRooms(mapSize, roomCount)
   newMap.layers.terrain = dungeonRooms.flat()
 
-  newMap.layers.terrain = fillRemaining(size, newMap.layers.terrain, {
+  const dungeonPaths = genDungeonPaths(mapSize, dungeonRooms)
+  newMap.layers.terrain = [...newMap.layers.terrain, ...dungeonPaths]
+
+  newMap.layers.terrain = fillRemaining(mapSize, newMap.layers.terrain, {
     tileId: getTilemapInfoByKey("DUNGEON_WALL").tileId,
     impassable: true,
   })
   return newMap
-}
-
-export function make2dArray<T extends any>(size: Size, defaultValue: T): T[][] {
-  return Array(size.width).fill(null).map(() => Array(size.height).fill(defaultValue));
 }
 
 export function tilesAtPos<T extends LayerTile>(layerTiles: T[], pos: Pos): T[] {
@@ -298,4 +385,58 @@ export function getRandomPassablePos(map: MapState) {
     }
   }
   return Pos(-1, -1)
+}
+
+export function getDirection(startPos: Pos, endPos: Pos): Direction {
+  if (startPos.x === endPos.x) {
+    if (startPos.y > endPos.y) return "up"
+    if (startPos.y < endPos.y) return "down"
+    return "none"
+  }
+  if (startPos.y === endPos.y) {
+    if (startPos.x > endPos.x) return "left"
+    if (startPos.x < endPos.x) return "right"
+  }
+  if (startPos.x > endPos.x) {
+    if (startPos.y > endPos.y) return "upperLeft"
+    if (startPos.y < endPos.y) return "lowerLeft"
+  }
+  if (startPos.x < endPos.x) {
+    if (startPos.y < endPos.y) return "lowerRight"
+    if (startPos.y > endPos.y) return "upperRight"
+  }
+  return "none"
+}
+
+export function incrementPosByDirection(pos: Pos, direction: Direction, incrementBy: number = 1) {
+  let dx = 0
+  let dy = 0
+  switch (direction) {
+    case "left":
+    case "upperLeft":
+    case "lowerLeft":
+      dx = 0 - incrementBy
+      break
+    case "right":
+    case "upperRight":
+    case "lowerRight":
+      dx = incrementBy
+      break
+  }
+  switch (direction) {
+    case "up":
+    case "upperLeft":
+    case "upperRight":
+      dy = 0 - incrementBy
+      break
+    case "down":
+    case "lowerLeft":
+    case "lowerRight":
+      dy = incrementBy
+      break
+  }
+  return Pos(
+    pos.x + dx,
+    pos.y + dy
+  )
 }

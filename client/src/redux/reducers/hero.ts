@@ -1,7 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { AppThunk } from '../store'
 import { isPassable, getRandomPassablePos, inBounds } from '../../lib/mapUtil'
-import { addMessage } from './messages'
 import { discoverSurroundings } from './currentMap'
 import { batch } from 'react-redux'
 
@@ -59,10 +58,10 @@ export const transposeHero = (transposeBy: Pos): AppThunk<boolean> => (dispatch,
     })
     return true
   } else {
-    dispatch(addMessage({
-      message: "You can't move there.",
-      severity: "normal"
-    }))
+    // dispatch(addMessage({
+    //   message: "You can't move there.",
+    //   severity: "normal"
+    // }))
     return false
     // Can detect and handle door or cross map entry here
   }

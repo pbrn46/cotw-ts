@@ -1,5 +1,7 @@
 type Side = "top" | "bottom" | "left" | "right"
 
+type Direction = "up" | "down" | "left" | "right" | "upperRight" | "upperLeft" | "lowerRight" | "lowerLeft" | "none"
+
 type Size = {
   width: number,
   height: number,
