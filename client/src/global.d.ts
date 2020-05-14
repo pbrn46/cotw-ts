@@ -16,6 +16,8 @@ type LayerTile = {
   tileId: number,
   pos: Pos,
   impassable?: boolean
+  shouldStopBefore?: boolean
+  shouldStopOnTop?: boolean
 }
 
 type TerrainLayerTile = LayerTile & {

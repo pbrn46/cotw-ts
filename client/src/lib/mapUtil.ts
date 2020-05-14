@@ -62,6 +62,30 @@ export function isPassable(pos: Pos, currentMap: MapState): boolean {
   return true
 }
 
+export function isStopBefore(pos: Pos, currentMap: MapState): boolean {
+  if (!inBounds(pos, currentMap.size)) return false
+  if (
+    currentMap.layers.terrain.some(tile => tile.shouldStopBefore && isSamePos(tile.pos, pos))
+    || currentMap.layers.structure.some(tile => tile.shouldStopBefore && isSamePos(tile.pos, pos))
+    || currentMap.layers.sprites.some(tile => tile.shouldStopBefore && isSamePos(tile.pos, pos))
+  ) {
+    return true
+  }
+  return false
+}
+
+export function isStopOnTop(pos: Pos, currentMap: MapState): boolean {
+  if (!inBounds(pos, currentMap.size)) return false
+  if (
+    currentMap.layers.terrain.some(tile => tile.shouldStopOnTop && isSamePos(tile.pos, pos))
+    || currentMap.layers.structure.some(tile => tile.shouldStopOnTop && isSamePos(tile.pos, pos))
+    || currentMap.layers.sprites.some(tile => tile.shouldStopOnTop && isSamePos(tile.pos, pos))
+  ) {
+    return true
+  }
+  return false
+}
+
 export function genCastle(pos: Pos, size: Size, gateSide?: Side): Pick<Layers, "terrain" | "structure"> {
   let structure: LayerTile[] = []
 
@@ -251,29 +275,36 @@ export function genDungeonPaths(mapSize: Size, dungeonRooms: TerrainLayerTile[][
       .find(pos => inBounds(pos, mapSize) && terrainTouched[pos.x][pos.y])
     const startDirection = roomStartPos ? getDirection(roomStartPos, startPos) : "none"
 
+    let newPath = []
     const doorChance = 0.35
     const doorOrFloorTile = Math.random() < doorChance
-      ? { tileId: doorTile.tileId, pos: startPos }
-      : { tileId: floorTile.tileId, pos: startPos }
-    newLayer.push(doorOrFloorTile)
+      ? { tileId: doorTile.tileId, pos: startPos, shouldStopOnTop: true }
+      : { tileId: floorTile.tileId, pos: startPos, shouldStopOnTop: true }
+    newPath.push(doorOrFloorTile)
     let curPos = incrementPosByDirection(startPos, startDirection)
+    let brokenByPath = false
     while (inBounds(
       Pos(curPos.x - 1, curPos.y - 1),
       Size(mapSize.width - 2, mapSize.height - 2))
       && !terrainTouched[curPos.x][curPos.y]
       && !pathTouched[curPos.x][curPos.y]
     ) {
-      newLayer.push({ tileId: floorTile.tileId, pos: curPos })
+      newPath.push({ tileId: floorTile.tileId, pos: curPos })
       newPathTouched[curPos.x][curPos.y] = true
 
       const surroundingPoses = getSurroundingPoses(curPos, false)
       const prevPathTouched = pathTouched
       if (surroundingPoses.some(pos => prevPathTouched[pos.x][pos.y])) {
+        brokenByPath = true
         break
       }
       curPos = incrementPosByDirection(curPos, startDirection)
     }
+    if (newPath.length === 1 || (newPath.length > 0 && !brokenByPath)) {
+      newPath[newPath.length - 1] = { ...newPath[newPath.length - 1], shouldStopOnTop: true }
+    }
     pathTouched = newPathTouched
+    newLayer = [...newLayer, ...newPath]
   }
   return newLayer
 }
@@ -291,7 +322,7 @@ export function genStairsUp(map: MapState, stairsCount: number): LayerTile[] {
     if (tiles.length === 1 && (
       tiles[0].tileId === floorTile.tileId
       || tiles[0].tileId === floorLitTile.tileId)) {
-      stairs.push({ tileId: stairsUpTile.tileId, pos })
+      stairs.push({ tileId: stairsUpTile.tileId, pos, shouldStopOnTop: true })
       stairsMade++
     }
   }
@@ -311,7 +342,7 @@ export function genStairsDown(map: MapState, stairsCount: number): LayerTile[] {
     if (tiles.length === 1 && (
       tiles[0].tileId === floorTile.tileId
       || tiles[0].tileId === floorLitTile.tileId)) {
-      stairs.push({ tileId: stairsDownTile.tileId, pos })
+      stairs.push({ tileId: stairsDownTile.tileId, pos, shouldStopOnTop: true })
       stairsMade++
     }
   }

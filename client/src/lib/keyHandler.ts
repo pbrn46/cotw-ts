@@ -1,87 +1,62 @@
 import { useEffect } from "react"
 import { useDispatch } from "../redux/store"
-import { transposeHero } from "../redux/reducers/hero"
-import { batch } from "react-redux"
+import { heroWalkByDirection, heroSprintByDirection } from "../redux/reducers/hero"
 
 
 export function useKeyHandler() {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const shiftHandlers: Record<string, (() => void) | undefined> = {
-      "ArrowUp": () => {
-        batch(() => {
-          while (dispatch(transposeHero({ x: 0, y: -1 }))) { }
-        })
+    // Keyboard handlers. Return true if handled, or false to propogate
+    const handlers: Record<string, ((e: KeyboardEvent) => boolean) | undefined> = {
+      "ArrowUp": e => {
+        if (e.shiftKey) dispatch(heroSprintByDirection("up"))
+        else dispatch(heroWalkByDirection("up"))
+        return true
       },
-      "ArrowRight": () => {
-        batch(() => {
-          while (dispatch(transposeHero({ x: 1, y: 0 }))) { }
-        })
+      "ArrowRight": e => {
+        if (e.shiftKey) dispatch(heroSprintByDirection("right"))
+        else dispatch(heroWalkByDirection("right"))
+        return true
       },
-      "ArrowDown": () => {
-        batch(() => {
-          while (dispatch(transposeHero({ x: 0, y: 1 }))) { }
-        })
+      "ArrowDown": e => {
+        if (e.shiftKey) dispatch(heroSprintByDirection("down"))
+        else dispatch(heroWalkByDirection("down"))
+        return true
       },
-      "ArrowLeft": () => {
-        batch(() => {
-          while (dispatch(transposeHero({ x: -1, y: 0 }))) { }
-        })
+      "ArrowLeft": e => {
+        if (e.shiftKey) dispatch(heroSprintByDirection("left"))
+        else dispatch(heroWalkByDirection("left"))
+        return true
       },
-      "Home": () => {
-        batch(() => {
-          while (dispatch(transposeHero({ x: -1, y: -1 }))) { }
-        })
+      "Home": e => {
+        if (e.shiftKey) dispatch(heroSprintByDirection("upperLeft"))
+        else dispatch(heroWalkByDirection("upperLeft"))
+        return true
       },
-      "End": () => {
-        batch(() => {
-          while (dispatch(transposeHero({ x: -1, y: 1 }))) { }
-        })
+      "End": e => {
+        if (e.shiftKey) dispatch(heroSprintByDirection("lowerLeft"))
+        else dispatch(heroWalkByDirection("lowerLeft"))
+        return true
       },
-      "PageUp": () => {
-        batch(() => {
-          while (dispatch(transposeHero({ x: 1, y: -1 }))) { }
-        })
+      "PageUp": e => {
+        if (e.shiftKey) dispatch(heroSprintByDirection("upperRight"))
+        else dispatch(heroWalkByDirection("upperRight"))
+        return true
       },
-      "PageDown": () => {
-        batch(() => {
-          while (dispatch(transposeHero({ x: 1, y: 1 }))) { }
-        })
-      },
-    }
-    const handlers: Record<string, (() => void) | undefined> = {
-      "ArrowUp": () => {
-        dispatch(transposeHero({ x: 0, y: -1 }))
-      },
-      "ArrowRight": () => {
-        dispatch(transposeHero({ x: 1, y: 0 }))
-      },
-      "ArrowDown": () => {
-        dispatch(transposeHero({ x: 0, y: 1 }))
-      },
-      "ArrowLeft": () => {
-        dispatch(transposeHero({ x: -1, y: 0 }))
-      },
-      "Home": () => {
-        dispatch(transposeHero({ x: -1, y: -1 }))
-      },
-      "End": () => {
-        dispatch(transposeHero({ x: -1, y: 1 }))
-      },
-      "PageUp": () => {
-        dispatch(transposeHero({ x: 1, y: -1 }))
-      },
-      "PageDown": () => {
-        dispatch(transposeHero({ x: 1, y: 1 }))
+      "PageDown": e => {
+        if (e.shiftKey) dispatch(heroSprintByDirection("lowerRight"))
+        else dispatch(heroWalkByDirection("lowerRight"))
+        return true
       },
     }
     const handleKeyDown = (e: KeyboardEvent) => {
-      const handler = e.shiftKey ? shiftHandlers[e.key] : handlers[e.key]
+      const handler = handlers[e.key]
       if (handler) {
-        e.stopPropagation()
-        e.preventDefault()
-        handler()
+        if (handler(e)) {
+          e.stopPropagation()
+          e.preventDefault()
+        }
       }
     }
     window.addEventListener('keydown', handleKeyDown)
