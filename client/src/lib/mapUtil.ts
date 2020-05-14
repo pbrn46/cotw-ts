@@ -151,8 +151,7 @@ export function getBlankMapState(): MapState {
   return _.cloneDeep(blankMapState)
 }
 
-
-export function genDungeonRoom(pos: Pos, size: Size, isLit: boolean = false): Pick<Layers, "terrain"> {
+export function genDungeonRoom(pos: Pos, size: Size, isLit: boolean = false): TerrainLayerTile[] {
   const terrain: TerrainLayerTile[] = []
   const floorTileId = getTilemapInfoByKey("DUNGEON_FLOOR")?.tileId
   if (!floorTileId) throw new Error("Invalid tile key")
@@ -162,7 +161,7 @@ export function genDungeonRoom(pos: Pos, size: Size, isLit: boolean = false): Pi
     }
   }
 
-  return { terrain }
+  return terrain
 }
 
 export function randomSize(minSize: Size, maxSize: Size): Size {
@@ -198,9 +197,8 @@ export function getSurroundingPosesArray(layer: LayerTile[], size: Size) {
   }, [])
 }
 
-export function genMap(size: Size, rooms: number): MapState {
-  const newMap: MapState = getBlankMapState()
-  newMap.size = { ...size }
+export function genDungeonRooms(size: Size, rooms: number): TerrainLayerTile[] {
+  let newLayer: TerrainLayerTile[] = []
 
   const roomTouched = make2dArray(size, false)
   const terrainTouched = make2dArray(size, false)
@@ -213,17 +211,31 @@ export function genMap(size: Size, rooms: number): MapState {
     const roomPos = randomPos(
       Pos(1, 1),
       Pos(size.width - roomSize.width - 1, size.height - roomSize.height - 1))
-    const roomLayers = genDungeonRoom(roomPos, roomSize)
+    const roomLayer = genDungeonRoom(roomPos, roomSize)
     // If room overlaps
-    if (roomLayers.terrain.some(tile => roomTouched[tile.pos.x][tile.pos.y])) continue
-    roomLayers.terrain.forEach(tile => {
+    if (roomLayer.some(tile => roomTouched[tile.pos.x][tile.pos.y])) continue
+    roomLayer.forEach(tile => {
       roomTouched[tile.pos.x][tile.pos.y] = true
       terrainTouched[tile.pos.x][tile.pos.y] = true
     })
-    getSurroundingPosesArray(roomLayers.terrain, size).forEach(pos => roomTouched[pos.x][pos.y] = true)
-    newMap.layers.terrain = [...newMap.layers.terrain, ...roomLayers.terrain]
+    getSurroundingPosesArray(roomLayer, size).forEach(pos => roomTouched[pos.x][pos.y] = true)
+    newLayer = [...newLayer, ...roomLayer]
     roomCount++
   }
+
+  newLayer = fillRemaining(size, newLayer, {
+    tileId: getTilemapInfoByKey("DUNGEON_WALL").tileId,
+    impassable: true,
+  })
+  return newLayer
+}
+
+export function genMap(size: Size, rooms: number): MapState {
+  const newMap: MapState = getBlankMapState()
+  newMap.size = { ...size }
+
+  const dungeonRooms = genDungeonRooms(size, rooms)
+  newMap.layers.terrain = dungeonRooms
 
   newMap.layers.terrain = fillRemaining(size, newMap.layers.terrain, {
     tileId: getTilemapInfoByKey("DUNGEON_WALL").tileId,
@@ -236,12 +248,11 @@ export function make2dArray<T extends any>(size: Size, defaultValue: T): T[][] {
   return Array(size.width).fill(null).map(() => Array(size.height).fill(defaultValue));
 }
 
-
 export function tilesAtPos<T extends LayerTile>(layerTiles: T[], pos: Pos): T[] {
   return layerTiles.filter(tile => isSamePos(tile.pos, pos))
 }
 
-// Check whether pos is in bounds of 0,0 to size
+/** Check whether pos is in bounds of [0, 0] to size */
 export function inBounds(pos: Pos, size: Size): boolean {
   return pos.x >= 0
     && pos.y >= 0
@@ -249,7 +260,7 @@ export function inBounds(pos: Pos, size: Size): boolean {
     && pos.y < size.height
 }
 
-// Fill empty positions with tile, and returns new layer array
+/** Fill empty positions with tile, and returns new layer array */
 export function fillRemaining(size: Size, layer: LayerTile[], tile: Omit<LayerTile, "pos">) {
   const touched = make2dArray(size, false)
   const newLayer = [...layer]
@@ -269,7 +280,6 @@ export function fillRemaining(size: Size, layer: LayerTile[], tile: Omit<LayerTi
   return newLayer
 }
 
-
 // Returns all possible poses from specific size
 export function getPosesFromSize(size: Size): Pos[] {
   const poses: Pos[] = []
@@ -280,6 +290,7 @@ export function getPosesFromSize(size: Size): Pos[] {
   }
   return poses
 }
+
 // Gets random passable position or -1, -1 if no positions possible
 export function getRandomPassablePos(map: MapState) {
   // Or create an array of all possible poses first

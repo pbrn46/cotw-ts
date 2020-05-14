@@ -29,7 +29,7 @@ export default function WorldView() {
       <CanvasLayer layer={structureLayer} />
       <CanvasLayer layer={itemsLayer} />
       <CanvasLayer layer={spritesLayer} />
-      <CanvasLayer layer={[{ tileId: getTilemapInfoByKey("HERO_FEMALE").tileId, pos: heroPos }]} />
+      <CanvasLayer layer={[{ tileId: getTilemapInfoByKey("HERO_MALE").tileId, pos: heroPos }]} />
     </div>
   </div>
 }
