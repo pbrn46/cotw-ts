@@ -4,6 +4,7 @@ import { useScrollWatcher } from '../../lib/scroll'
 import { useKeyHandler } from '../../lib/keyHandler'
 import CanvasLayer from '../CanvasLayer'
 import { useSelector } from '../../redux/store'
+import { getTilemapInfoByKey } from '../../assets/tilemap'
 
 export default function WorldView() {
   const scrollRef = useRef<HTMLDivElement | null>(null)
@@ -24,7 +25,7 @@ export default function WorldView() {
       <div
         className="WorldView-Absolute"
         ref={absoluteRef} />
-      <CanvasLayer layer={terrainLayer} baseTile={{ tileId: 289 }} />
+      <CanvasLayer layer={terrainLayer} />
       <CanvasLayer layer={structureLayer} />
       <CanvasLayer layer={itemsLayer} />
       <CanvasLayer layer={spritesLayer} />

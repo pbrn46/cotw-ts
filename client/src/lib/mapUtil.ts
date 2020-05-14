@@ -193,15 +193,16 @@ export function getSurroundingPosesArray(layer: LayerTile[], size: Size) {
   }, [])
 }
 
-export function genMap(size: Size): MapState {
+export function genMap(size: Size, rooms: number): MapState {
   const newMap: MapState = getBlankMapState()
   newMap.size = { ...size }
 
-  const touched = make2dArray(size, false)
+  const roomTouched = make2dArray(size, false)
+  const terrainTouched = make2dArray(size, false)
 
   let roomCount = 0
   let tryCount = 0
-  while (roomCount < 10 && tryCount < 1000) {
+  while (roomCount < rooms && tryCount < rooms * 10) {
     tryCount++
     const roomSize = randomSize(Size(3, 3), Size(10, 10))
     const roomPos = randomPos(
@@ -209,12 +210,20 @@ export function genMap(size: Size): MapState {
       Pos(size.width - roomSize.width - 1, size.height - roomSize.height - 1))
     const roomLayers = genDungeonRoom(roomPos, roomSize)
     // If room overlaps
-    if (roomLayers.terrain.some(tile => touched[tile.pos.x][tile.pos.y])) continue
-    roomLayers.terrain.forEach(tile => touched[tile.pos.x][tile.pos.y] = true)
-    getSurroundingPosesArray(roomLayers.terrain, size).forEach(pos => touched[pos.x][pos.y] = true)
+    if (roomLayers.terrain.some(tile => roomTouched[tile.pos.x][tile.pos.y])) continue
+    roomLayers.terrain.forEach(tile => {
+      roomTouched[tile.pos.x][tile.pos.y] = true
+      terrainTouched[tile.pos.x][tile.pos.y] = true
+    })
+    getSurroundingPosesArray(roomLayers.terrain, size).forEach(pos => roomTouched[pos.x][pos.y] = true)
     newMap.layers.terrain = [...newMap.layers.terrain, ...roomLayers.terrain]
     roomCount++
   }
+
+  newMap.layers.terrain = fillRemaining(size, newMap.layers.terrain, {
+    tileId: getTilemapInfoByKey("DUNGEON_WALL").tileId,
+    impassable: true,
+  })
   return newMap
 }
 
@@ -233,4 +242,24 @@ export function inBounds(pos: Pos, size: Size): boolean {
     && pos.y >= 0
     && pos.x < size.width
     && pos.y < size.height
+}
+
+// Fill empty positions with tile, and returns new layer array
+export function fillRemaining(size: Size, layer: LayerTile[], tile: Omit<LayerTile, "pos">) {
+  const touched = make2dArray(size, false)
+  const newLayer = [...layer]
+
+  layer.forEach(tile => touched[tile.pos.x][tile.pos.y] = true)
+
+  for (let y = 0; y < size.height; y++) {
+    for (let x = 0; x < size.width; x++) {
+      if (!touched[x][y]) {
+        newLayer.push({
+          ...tile,
+          pos: Pos(x, y),
+        })
+      }
+    }
+  }
+  return newLayer
 }

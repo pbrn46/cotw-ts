@@ -1,5 +1,8 @@
-import { genCastle, make2dArray } from "../lib/mapUtil"
+import { genCastle, make2dArray, fillRemaining } from "../lib/mapUtil"
+import { getTilemapInfoByKey } from "../assets/tilemap"
 
+
+const mapSize: Size = { width: 80, height: 40 }
 
 const castle = genCastle({ x: 10, y: 2 }, { width: 9, height: 9 }, "bottom")
 
@@ -7,7 +10,7 @@ const spritesLayer: LayerTile[] = [
   { tileId: 263, pos: { x: 2, y: 2 }, },
 ]
 
-const terrainLayer: LayerTile[] = [
+let terrainLayer: LayerTile[] = [
   { tileId: 290, pos: { x: 14, y: 11 }, },
   { tileId: 290, pos: { x: 14, y: 12 }, },
   { tileId: 290, pos: { x: 14, y: 13 }, },
@@ -20,6 +23,9 @@ const terrainLayer: LayerTile[] = [
   { tileId: 322, pos: { x: 13, y: 14 }, impassable: true, },
   ...castle.terrain,
 ]
+terrainLayer = fillRemaining(mapSize, terrainLayer, {
+  tileId: getTilemapInfoByKey("GRASS").tileId
+})
 
 const itemsLayer: LayerTile[] = [
   { tileId: 85, pos: { x: 2, y: 3 }, }
@@ -30,8 +36,6 @@ const structureLayer: LayerTile[] = [
   //Stairs Down
   { tileId: 5, pos: { x: 14, y: 4 }, },
 ]
-
-const mapSize: Size = { width: 80, height: 40 }
 
 export default {
   size: mapSize,

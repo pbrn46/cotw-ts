@@ -28,14 +28,25 @@ export function getTilemapPosById(id: number): Pos {
   return { x, y }
 }
 
+type TilemapInfo = {
+  tileId: number
+  label: string
+}
+
+// Helper function for Typescript to create keys properly
+const createTilemapInfoByKey = <T extends any>(obj: T): Record<keyof T, TilemapInfo> => {
+  return obj
+}
 // Map keys to tileId
-const tilemapInfoByKey = {
+const tilemapInfoByKey = createTilemapInfoByKey({
   "CASTLE": { tileId: 1, label: "Castle" },
   "DOOR_CLOSED": { tileId: 2, label: "Door, Closed" },
   "DOOR_OPENED": { tileId: 3, label: "Door, Opened" },
+  "GRASS": { tileId: 289, label: "Grass" },
   "DUNGEON_FLOOR": { tileId: 293, label: "Dungeon Floor" },
   "DUNGEON_FLOOR_LIT": { tileId: 294, label: "Dungeon Floor, Lit" },
-}
+  "DUNGEON_WALL": { tileId: 295, label: "Dungeon Wall" },
+})
 
 export type TilemapKeys = keyof typeof tilemapInfoByKey
 
@@ -44,6 +55,8 @@ export type TilemapInfoItem = {
   label: string
 }
 
-export function getTilemapInfoByKey(key: TilemapKeys): TilemapInfoItem | null {
-  return tilemapInfoByKey[key] || null
+export function getTilemapInfoByKey(key: TilemapKeys): TilemapInfoItem {
+  const tile = tilemapInfoByKey[key]
+  if (!tile) throw new Error("Invalid tile key")
+  return tile
 }
