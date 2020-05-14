@@ -57,30 +57,36 @@ export const discoverRoom = (pos: Pos): AppThunk => (dispatch, getState) => {
   const state = getState()
   const touched = make2dArray(state.currentMap.size, false)
   const discoverablePoses: Pos[] = []
+  // const discovered = [...state.currentMap.discovered]
   let posesToCheck = [pos]
+  let hasDiscovered = false
   while (posesToCheck.length > 0) {
     let curPos = posesToCheck.shift()
     if (!curPos || !inBounds(curPos, state.currentMap.size)) break
-    touched[curPos.x][curPos.y] = true
     const tiles = tilesAtPos(state.currentMap.layers.terrain, curPos)
     if (!tiles.some(tile => tile.isRoom && tile.isLit)) continue
     const surrounding = getSurroundingPoses(curPos, false)
     for (let surroundingPos of surrounding) {
       if (!inBounds(surroundingPos, state.currentMap.size)) continue
       if (!touched[surroundingPos.x][surroundingPos.y]) {
+        touched[surroundingPos.x][surroundingPos.y] = true
         posesToCheck.push(surroundingPos)
-        discoverablePoses.push(surroundingPos)
+        if (!state.currentMap.discovered?.[surroundingPos.x]?.[surroundingPos.y]) {
+          discoverablePoses.push(surroundingPos)
+          hasDiscovered = true
+        }
       }
     }
   }
-  // const terrainTileIds: (number | null)[][] = Array(width).fill(null).map(() => Array(height).fill(null));
-  const newDiscovered = [...state.currentMap.discovered]
-  for (let curPos of discoverablePoses) {
-    if (!newDiscovered[curPos.x]) newDiscovered[curPos.x] = []
-    else newDiscovered[curPos.x] = [...newDiscovered[curPos.x]]
-    newDiscovered[curPos.x][curPos.y] = true
+  if (hasDiscovered) {
+    const newDiscovered = [...state.currentMap.discovered]
+    for (let curPos of discoverablePoses) {
+      if (!newDiscovered[curPos.x]) newDiscovered[curPos.x] = []
+      else newDiscovered[curPos.x] = [...newDiscovered[curPos.x]]
+      newDiscovered[curPos.x][curPos.y] = true
+    }
+    dispatch(setDiscovered(newDiscovered))
   }
-  dispatch(setDiscovered(newDiscovered))
 }
 
 export const loadMap = (): AppThunk => (dispatch) => {

@@ -9,7 +9,7 @@ type CanvasLayerProps = {
   layer: LayerTile[]
   baseTile?: Omit<LayerTile, "pos">
 }
-export default function CanvasLayer({ layer, baseTile }: CanvasLayerProps) {
+export default React.memo(function CanvasLayer({ layer, baseTile }: CanvasLayerProps) {
   const mapSize = useSelector(state => state.currentMap.size)
   const mapPxSize = useSelector(currentMapPxSizeSelector)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -49,4 +49,4 @@ export default function CanvasLayer({ layer, baseTile }: CanvasLayerProps) {
   }, [baseTile, discovered, draw, layer, mapPxSize.height, mapPxSize.width, mapSize, shrouded])
 
   return <canvas ref={canvasRef} width={mapPxSize.width} height={mapPxSize.height} />
-}
+})
