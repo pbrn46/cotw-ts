@@ -6,9 +6,12 @@ import { setShrouded } from "./config"
 
 
 export const debugTest1 = (): AppThunk => (dispatch, getState) => {
-  dispatch(setShrouded(false))
-  dispatch(setCurrentMap(genMap(Size(60, 60), 10)))
-  dispatch(randomHeroPos())
-  const heroPos = getState().hero.pos
-  dispatch(discoverSurroundings(heroPos))
+  const runDebug = () => {
+    dispatch(setShrouded(false))
+    dispatch(setCurrentMap(genMap(Size(60, 60), 10)))
+    dispatch(randomHeroPos())
+    const heroPos = getState().hero.pos
+    dispatch(discoverSurroundings(heroPos))
+  }
+  runDebug()
 }
