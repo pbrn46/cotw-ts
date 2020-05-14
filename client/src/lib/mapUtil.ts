@@ -46,26 +46,21 @@ export function isSamePos(a: Pos, b: Pos) {
   return a.x === b.x && a.y === b.y
 }
 
+export function getTilesAt(pos: Pos, tiles: LayerTile[]): LayerTile[] {
+  return tiles.filter(tile => isSamePos(pos, tile.pos))
+}
+
 export function isPassable(pos: Pos, currentMap: MapState): boolean {
   if (!inBounds(pos, currentMap.size)) return false
-  for (let tile of currentMap.layers.terrain) {
-    if (tile.impassable && isSamePos(tile.pos, pos)) {
-      return false
-    }
-  }
-  for (let tile of currentMap.layers.structure) {
-    if (tile.impassable && isSamePos(tile.pos, pos)) {
-      return false
-    }
-  }
-  for (let tile of currentMap.layers.sprites) {
-    if (tile.impassable && isSamePos(tile.pos, pos)) {
-      return false
-    }
+  if (
+    currentMap.layers.terrain.some(tile => tile.impassable && isSamePos(tile.pos, pos))
+    || currentMap.layers.structure.some(tile => tile.impassable && isSamePos(tile.pos, pos))
+    || currentMap.layers.sprites.some(tile => tile.impassable && isSamePos(tile.pos, pos))
+  ) {
+    return false
   }
   return true
 }
-
 
 export function genCastle(pos: Pos, size: Size, gateSide?: Side): Pick<Layers, "terrain" | "structure"> {
   let structure: LayerTile[] = []
@@ -283,6 +278,46 @@ export function genDungeonPaths(mapSize: Size, dungeonRooms: TerrainLayerTile[][
   return newLayer
 }
 
+export function genStairsUp(map: MapState, stairsCount: number): LayerTile[] {
+  const poses = getPosesFromSize(map.size)
+  const stairs: LayerTile[] = []
+  let stairsMade = 0
+  const stairsUpTile = getTilemapInfoByKey("STAIRS_UP")
+  const floorTile = getTilemapInfoByKey("DUNGEON_FLOOR")
+  const floorLitTile = getTilemapInfoByKey("DUNGEON_FLOOR_LIT")
+  while (poses.length > 0 && stairsMade < stairsCount) {
+    const pos = poses.splice(Math.floor(Math.random() * poses.length), 1)[0]
+    const tiles = getTilesAt(pos, map.layers.terrain)
+    if (tiles.length === 1 && (
+      tiles[0].tileId === floorTile.tileId
+      || tiles[0].tileId === floorLitTile.tileId)) {
+      stairs.push({ tileId: stairsUpTile.tileId, pos })
+      stairsMade++
+    }
+  }
+  return stairs
+}
+
+export function genStairsDown(map: MapState, stairsCount: number): LayerTile[] {
+  const poses = getPosesFromSize(map.size)
+  const stairs: LayerTile[] = []
+  let stairsMade = 0
+  const stairsDownTile = getTilemapInfoByKey("STAIRS_DOWN")
+  const floorTile = getTilemapInfoByKey("DUNGEON_FLOOR")
+  const floorLitTile = getTilemapInfoByKey("DUNGEON_FLOOR_LIT")
+  while (poses.length > 0 && stairsMade < stairsCount) {
+    const pos = poses.splice(Math.floor(Math.random() * poses.length), 1)[0]
+    const tiles = getTilesAt(pos, map.layers.terrain)
+    if (tiles.length === 1 && (
+      tiles[0].tileId === floorTile.tileId
+      || tiles[0].tileId === floorLitTile.tileId)) {
+      stairs.push({ tileId: stairsDownTile.tileId, pos })
+      stairsMade++
+    }
+  }
+  return stairs
+}
+
 export function genMap(mapSize: Size, roomCount: number): MapState {
   const newMap: MapState = getBlankMapState()
   newMap.size = { ...mapSize }
@@ -292,6 +327,12 @@ export function genMap(mapSize: Size, roomCount: number): MapState {
 
   const dungeonPaths = genDungeonPaths(mapSize, dungeonRooms)
   newMap.layers.terrain = [...newMap.layers.terrain, ...dungeonPaths]
+
+  const stairsUp = genStairsUp(newMap, 3)
+  newMap.layers.terrain = [...newMap.layers.terrain, ...stairsUp]
+
+  const stairsDown = genStairsDown(newMap, 3)
+  newMap.layers.terrain = [...newMap.layers.terrain, ...stairsDown]
 
   newMap.layers.terrain = fillRemaining(mapSize, newMap.layers.terrain, {
     tileId: getTilemapInfoByKey("DUNGEON_WALL").tileId,
@@ -345,7 +386,6 @@ export function getPosesFromSize(size: Size): Pos[] {
 
 // Gets random passable position or -1, -1 if no positions possible
 export function getRandomPassablePos(map: MapState) {
-  // Or create an array of all possible poses first
   const poses = getPosesFromSize(map.size)
   while (poses.length > 0) {
     const pos = poses.splice(Math.floor(Math.random() * poses.length), 1)[0]
