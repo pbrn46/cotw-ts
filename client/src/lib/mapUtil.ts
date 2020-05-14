@@ -54,6 +54,11 @@ export function isPassable(pos: Pos, currentMap: MapState): boolean {
       return false
     }
   }
+  for (let tile of currentMap.layers.sprites) {
+    if (tile.impassable && isSamePos(tile.pos, pos)) {
+      return false
+    }
+  }
   return true
 }
 
