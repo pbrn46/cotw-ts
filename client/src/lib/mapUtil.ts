@@ -246,7 +246,7 @@ export function genDungeonPaths(mapSize: Size, dungeonRooms: TerrainLayerTile[][
     const startPos = roomSurrounding[Math.floor(Math.random() * roomSurrounding.length)]
     let targetRoomIndex = Math.floor(Math.random() * (dungeonRooms.length - 1))
     if (targetRoomIndex >= i) targetRoomIndex++
-    const targetRoom = dungeonRooms[targetRoomIndex]
+    // const targetRoom = dungeonRooms[targetRoomIndex]
     // const targetPos = targetRoom[Math.floor(Math.random() * targetRoom.length)].pos
 
     const floorTile = getTilemapInfoByKey("DUNGEON_FLOOR")
@@ -278,38 +278,7 @@ export function genDungeonPaths(mapSize: Size, dungeonRooms: TerrainLayerTile[][
       }
       curPos = incrementPosByDirection(curPos, startDirection)
     }
-
     pathTouched = newPathTouched
-    // console.log(startDirection, roomStartPos, startPos, targetPos)
-
-
-
-    // if (startPos.x === targetPos.x) {
-    //   const x = startPos.x
-    //   if (startPos.y < targetPos.y) {
-    //     for (let y = startPos.y; y < targetPos.y; y++) {
-    //       newLayer.push({ tileId: floorTile.tileId, pos: Pos(x, y) })
-    //     }
-    //   } else {
-    //     for (let y = startPos.y; y > targetPos.y; y--) {
-    //       newLayer.push({ tileId: floorTile.tileId, pos: Pos(x, y) })
-    //     }
-    //   }
-    // }
-    // else if (startPos.y === targetPos.y) {
-    //   const y = startPos.y
-    //   if (startPos.x < targetPos.x) {
-    //     for (let x = startPos.x; x < targetPos.x; x++) {
-    //       newLayer.push({ tileId: floorTile.tileId, pos: Pos(x, y) })
-    //     }
-    //   } else {
-    //     for (let x = startPos.x; x > targetPos.x; x--) {
-    //       newLayer.push({ tileId: floorTile.tileId, pos: Pos(x, y) })
-    //     }
-    //   }
-    // }
-
-    // newLayer.push({ tileId: getTilemapInfoByKey("DUNGEON_FLOOR").tileId, pos: startPos })
   }
   return newLayer
 }
