@@ -292,10 +292,13 @@ export function genDungeonPaths(mapSize: Size, dungeonRooms: TerrainLayerTile[][
       newPath.push({ tileId: floorTile.tileId, pos: curPos })
       newPathTouched[curPos.x][curPos.y] = true
 
-      const surroundingPoses = getSurroundingPoses(curPos, false)
+      const surroundingPoses = getSurroundingPoses(curPos, false, false)
       const prevPathTouched = pathTouched
       if (surroundingPoses.some(pos => prevPathTouched[pos.x][pos.y])) {
         brokenByPath = true
+        break
+      }
+      if (surroundingPoses.some(pos => terrainTouched[pos.x][pos.y])) {
         break
       }
       curPos = incrementPosByDirection(curPos, startDirection)
