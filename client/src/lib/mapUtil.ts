@@ -160,7 +160,6 @@ export function genDungeonRoom(pos: Pos, size: Size, isLit: boolean = false): Te
       terrain.push({ tileId: floorTileId, pos: { x, y }, isRoom: true, isLit })
     }
   }
-
   return terrain
 }
 
@@ -197,8 +196,8 @@ export function getSurroundingPosesArray(layer: LayerTile[], size: Size) {
   }, [])
 }
 
-export function genDungeonRooms(size: Size, rooms: number): TerrainLayerTile[] {
-  let newLayer: TerrainLayerTile[] = []
+export function genDungeonRooms(size: Size, rooms: number): TerrainLayerTile[][] {
+  let newLayers: TerrainLayerTile[][] = []
 
   const roomTouched = make2dArray(size, false)
   const terrainTouched = make2dArray(size, false)
@@ -219,15 +218,12 @@ export function genDungeonRooms(size: Size, rooms: number): TerrainLayerTile[] {
       terrainTouched[tile.pos.x][tile.pos.y] = true
     })
     getSurroundingPosesArray(roomLayer, size).forEach(pos => roomTouched[pos.x][pos.y] = true)
-    newLayer = [...newLayer, ...roomLayer]
+    newLayers.push(roomLayer)
+    // newLayer = [...newLayer, ...roomLayer]
     roomCount++
   }
 
-  newLayer = fillRemaining(size, newLayer, {
-    tileId: getTilemapInfoByKey("DUNGEON_WALL").tileId,
-    impassable: true,
-  })
-  return newLayer
+  return newLayers
 }
 
 export function genMap(size: Size, rooms: number): MapState {
@@ -235,7 +231,7 @@ export function genMap(size: Size, rooms: number): MapState {
   newMap.size = { ...size }
 
   const dungeonRooms = genDungeonRooms(size, rooms)
-  newMap.layers.terrain = dungeonRooms
+  newMap.layers.terrain = dungeonRooms.flat()
 
   newMap.layers.terrain = fillRemaining(size, newMap.layers.terrain, {
     tileId: getTilemapInfoByKey("DUNGEON_WALL").tileId,
