@@ -4,6 +4,7 @@ import currentMap from './currentMap'
 import config from './config'
 import hero from './hero'
 import messages from './messages'
+import inventory from './inventory'
 
 
 const rootReducer = combineReducers({
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   currentMap,
   hero,
   messages,
+  inventory,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

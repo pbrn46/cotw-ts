@@ -12,8 +12,10 @@ type Pos = {
   y: number,
 }
 
+type TileId = number
+
 type LayerTile = {
-  tileId: number,
+  tileId: TileId,
   pos: Pos,
   impassable?: boolean
   shouldStopBefore?: boolean
@@ -60,3 +62,26 @@ type SpriteStats = {
 }
 
 type ShroudMode = "hidden" | "visible" | "alpha"
+
+type EquippableType =
+  "armor" | "neckwear" | "overgarment" | "helmet" | "shield"
+  | "bracers" | "gauntlets"
+  | "weapon" | "freeHand"
+  | "rightRing" | "leftRing"
+  | "belt" | "boots"
+  | "pack" | "purse"
+
+type ItemType = Omit<EquippableType, "rightRing" | "leftRing" | "freeHand">
+  | "potion" | "scroll" | "ring" | "wand" | "container"
+
+type InventoryItem = {
+  tileId: TileId
+  weight: number,
+  bulk: number,
+  sellValue: number,
+  buyValue: number,
+  itemType: ItemType,
+  contents?: InventoryItem[]
+  charges?: number,
+  isJunk?: boolean,
+}
