@@ -7,7 +7,7 @@ import { useKeyHandler } from '../../../lib/keyHandler'
 
 
 export default function Home() {
-  useKeyHandler("world")
+  useKeyHandler("home")
   return <Container style={{ height: "100%" }}>
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <div>

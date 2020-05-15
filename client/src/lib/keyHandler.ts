@@ -4,13 +4,13 @@ import { heroWalkByDirection, heroSprintByDirection } from "../redux/reducers/he
 import { useHistory } from "react-router-dom"
 
 
-type KeyHandlerScreen = "world" | "inventory"
+type KeyHandlerScreen = "home" | "inventory"
 
 type KeyHandlers = Record<string, ((e: KeyboardEvent) => boolean) | undefined>
 type GetKeyHandlersFn = (dispatch: ReturnType<typeof useDispatch>,
   history: ReturnType<typeof useHistory>) => KeyHandlers
 
-const getWorldKeyHandlers: GetKeyHandlersFn = (dispatch, history) => {
+const getHomeKeyHandlers: GetKeyHandlersFn = (dispatch, history) => {
   return {
     "ArrowUp": e => {
       if (e.shiftKey) dispatch(heroSprintByDirection("up"))
@@ -79,9 +79,9 @@ export function useKeyHandler(screen: KeyHandlerScreen) {
       case "inventory":
         handlers = getInventoryKeyHandlers(dispatch, history)
         break
-      case "world":
+      case "home":
       default:
-        handlers = getWorldKeyHandlers(dispatch, history)
+        handlers = getHomeKeyHandlers(dispatch, history)
         break
     }
     const handleKeyDown = (e: KeyboardEvent) => {
