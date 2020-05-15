@@ -1,0 +1,24 @@
+table.InventoryEquippedTable {
+  border-spacing: 0;
+  border-collapse: separate;
+  height: 100%;
+  width: 100%;
+}
+
+table.InventoryEquippedTable tr {
+  overflow: hidden;
+}
+
+table.InventoryEquippedTable td {
+  width: 20%;
+  max-width: 0;
+  height: 16.666%;
+  text-align: center;
+  font-size: 0.8em;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border: 1px solid black;
+  padding: 0;
+  margin: 0;
+}

@@ -1,7 +1,6 @@
 import React, { useRef } from 'react'
 import './WorldView.css'
 import { useScrollWatcher } from '../../lib/scroll'
-import { useKeyHandler } from '../../lib/keyHandler'
 import CanvasLayer from '../CanvasLayer'
 import { useSelector } from '../../redux/store'
 import { getTilemapInfoByKey } from '../../assets/tilemap'
@@ -15,8 +14,6 @@ export default function WorldView() {
   const spritesLayer = useSelector(state => state.currentMap.layers.sprites)
 
   const heroPos = useSelector(state => state.hero.pos)
-
-  useKeyHandler()
 
   useScrollWatcher(scrollRef, absoluteRef)
 
