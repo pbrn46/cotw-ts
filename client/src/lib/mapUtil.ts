@@ -269,7 +269,7 @@ export function genDungeonPaths(mapSize: Size, dungeonRooms: TerrainLayerTile[][
     // const targetPos = targetRoom[Math.floor(Math.random() * targetRoom.length)].pos
 
     const floorTile = getTilemapInfoByKey("DUNGEON_FLOOR")
-    const doorTile = getTilemapInfoByKey("DOOR_CLOSED")
+    const doorClosedTile = getTilemapInfoByKey("DOOR_CLOSED")
 
     const roomStartPos = getSurroundingPoses(startPos, false)
       .find(pos => inBounds(pos, mapSize) && terrainTouched[pos.x][pos.y])
@@ -278,7 +278,7 @@ export function genDungeonPaths(mapSize: Size, dungeonRooms: TerrainLayerTile[][
     let newPath = []
     const doorChance = 0.35
     const doorOrFloorTile = Math.random() < doorChance
-      ? { tileId: doorTile.tileId, pos: startPos, shouldStopOnTop: true }
+      ? { tileId: doorClosedTile.tileId, pos: startPos, shouldStopOnTop: true, shouldStopBefore: true }
       : { tileId: floorTile.tileId, pos: startPos, shouldStopOnTop: true }
     newPath.push(doorOrFloorTile)
     let curPos = incrementPosByDirection(startPos, startDirection)
