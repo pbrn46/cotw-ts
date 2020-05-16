@@ -2,12 +2,12 @@ import { PayloadAction, createSlice, createSelector } from '@reduxjs/toolkit'
 import { RootState } from './reducers'
 import { tilePxSizeSelector } from './config'
 import { home } from '../../maps'
-import { getSurroundingPoses, getBlankMapState, make2dArray, tilesAtPos, inBounds, isSamePos } from '../../lib/mapUtil'
+import { getSurroundingPoses, getBlankMapState, make2dArray, tilesAtPos, inBounds, Size } from '../../lib/mapUtil'
 import { AppThunk } from '../store'
 import { getTilemapInfoByKey } from '../../assets/tilemap'
 
 
-const initialState: MapState = getBlankMapState()
+const initialState: MapState = getBlankMapState(Size(1, 1))
 
 const slice = createSlice({
   name: 'currentMap',
@@ -29,12 +29,13 @@ const slice = createSlice({
     },
     openDoorAtPos: (state, action: PayloadAction<Pos>) => {
       // const newTerrain = state.layers.terrain.
+      const { x, y } = action.payload
       const doorClosedTile = getTilemapInfoByKey("DOOR_CLOSED")
       const doorOpenedTile = getTilemapInfoByKey("DOOR_OPENED")
-      const index = state.layers.terrain.findIndex(tile =>
-        isSamePos(tile.pos, action.payload) && tile.tileId === doorClosedTile.tileId)
+      const index = state.layers.terrain[x][y].findIndex(tile =>
+        tile.tileId === doorClosedTile.tileId)
       if (index >= 0) {
-        state.layers.terrain[index] = { tileId: doorOpenedTile.tileId, pos: action.payload, shouldStopOnTop: true }
+        state.layers.terrain[x][y][index] = { tileId: doorOpenedTile.tileId, pos: action.payload, shouldStopOnTop: true }
       }
     }
   },

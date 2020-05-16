@@ -1,9 +1,10 @@
-import React, { useRef } from 'react'
+import React, { useRef, useMemo } from 'react'
 import './WorldView.css'
 import { useScrollWatcher } from '../../lib/scroll'
 import CanvasLayer from '../CanvasLayer'
 import { useSelector } from '../../redux/store'
 import { getTilemapInfoByKey } from '../../assets/tilemap'
+import { make2dArray, isSamePos, Pos } from '../../lib/mapUtil'
 
 export default function WorldView() {
   const scrollRef = useRef<HTMLDivElement | null>(null)
@@ -14,6 +15,14 @@ export default function WorldView() {
   const spritesLayer = useSelector(state => state.currentMap.layers.sprites)
 
   const heroPos = useSelector(state => state.hero.pos)
+
+  const mapSize = useSelector(state => state.currentMap.size)
+  const heroLayer = useMemo(() => {
+    return make2dArray(mapSize, (x, y) => isSamePos(Pos(x, y), heroPos)
+      ? [{ tileId: getTilemapInfoByKey("HERO_MALE").tileId, pos: heroPos }]
+      : []
+    )
+  }, [heroPos, mapSize])
 
   useScrollWatcher(scrollRef, absoluteRef)
 
@@ -26,7 +35,7 @@ export default function WorldView() {
       <CanvasLayer layer={structureLayer} />
       <CanvasLayer layer={itemsLayer} />
       <CanvasLayer layer={spritesLayer} />
-      <CanvasLayer layer={[{ tileId: getTilemapInfoByKey("HERO_MALE").tileId, pos: heroPos }]} />
+      <CanvasLayer layer={heroLayer} />
     </div>
   </div>
 }

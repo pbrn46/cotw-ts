@@ -28,12 +28,12 @@ type TerrainLayerTile = LayerTile & {
 }
 
 interface Layers {
-  terrain: TerrainLayerTile[]
-  structure: LayerTile[]
-  traps: LayerTile[]
-  items: LayerTile[]
-  sprites: LayerTile[]
-  projectiles: LayerTile[]
+  terrain: TerrainLayerTile[][][]
+  structure: LayerTile[][][]
+  traps: LayerTile[][][]
+  items: LayerTile[][][]
+  sprites: LayerTile[][][]
+  projectiles: LayerTile[][][]
 }
 
 type Discovered = boolean[][]

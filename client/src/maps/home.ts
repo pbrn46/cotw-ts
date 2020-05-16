@@ -1,16 +1,17 @@
-import { genCastle, make2dArray, fillRemaining } from "../lib/mapUtil"
+import { genCastle, make2dArray, fillRemaining, tilesToLayer, mergeLayers } from "../lib/mapUtil"
 import { getTilemapInfoByKey } from "../assets/tilemap"
 
 
 const mapSize: Size = { width: 80, height: 40 }
 
-const castle = genCastle({ x: 10, y: 2 }, { width: 9, height: 9 }, "bottom")
+const castle = genCastle(mapSize, { x: 10, y: 2 }, { width: 9, height: 9 }, "bottom")
 
-const spritesLayer: LayerTile[] = [
+const spritesTiles: LayerTile[] = [
   { tileId: 263, pos: { x: 2, y: 2 }, },
 ]
+let spritesLayer = tilesToLayer(spritesTiles, mapSize)
 
-let terrainLayer: LayerTile[] = [
+let terrainTiles: TerrainLayerTile[] = [
   { tileId: 290, pos: { x: 14, y: 11 }, },
   { tileId: 290, pos: { x: 14, y: 12 }, },
   { tileId: 290, pos: { x: 14, y: 13 }, },
@@ -21,21 +22,31 @@ let terrainLayer: LayerTile[] = [
   { tileId: 306, pos: { x: 13, y: 13 }, impassable: true, },
   { tileId: 321, pos: { x: 12, y: 14 }, impassable: true, },
   { tileId: 322, pos: { x: 13, y: 14 }, impassable: true, },
-  ...castle.terrain,
+  // ...castle.terrain,
 ]
+let terrainLayer = mergeLayers(
+  mapSize,
+  tilesToLayer(terrainTiles, mapSize),
+  castle.terrain,
+)
 terrainLayer = fillRemaining(mapSize, terrainLayer, {
   tileId: getTilemapInfoByKey("GRASS").tileId
 })
 
-const itemsLayer: LayerTile[] = [
+const itemsTiles: LayerTile[] = [
   { tileId: 85, pos: { x: 2, y: 3 }, }
 ]
+let itemsLayer = tilesToLayer(itemsTiles, mapSize)
 
-const structureLayer: LayerTile[] = [
-  ...castle.structure,
+const structureTiles: LayerTile[] = [
   //Stairs Down
   { tileId: 5, pos: { x: 14, y: 4 }, },
 ]
+let structureLayer = mergeLayers(mapSize,
+  tilesToLayer(structureTiles, mapSize),
+  castle.structure,
+)
+
 
 export default {
   size: mapSize,

@@ -10,21 +10,28 @@ export function Size(width: number, height: number): Size {
   return { width, height }
 }
 
-export function make2dArray<T extends any>(size: Size, defaultValue: T): T[][] {
-  return Array(size.width).fill(null).map(() => Array(size.height).fill(defaultValue));
+export function make2dArray<R extends any>(size: Size, defaultValue: (xPos: number, yPos: number) => R): R[][]
+export function make2dArray<T extends any>(size: Size, defaultValue: T): T[][]
+export function make2dArray(size: Size, defaultValue: any): any[][] {
+  if (typeof defaultValue === "function") {
+    return Array(size.width)
+      .fill(null)
+      .map((xItem, xPos) => Array(size.height)
+        .fill(null)
+        .map((yItem, yPos) => defaultValue(xPos, yPos)
+        ));
+  } else {
+    return Array(size.width).fill(null).map(() => Array(size.height).fill(defaultValue));
+  }
 }
 
-export const blankMapState: MapState = {
-  size: { width: 1, height: 1 },
-  layers: {
-    terrain: [],
-    structure: [],
-    traps: [],
-    items: [],
-    sprites: [],
-    projectiles: [],
-  },
-  discovered: [],
+// Execute callback through all x,y of size
+export function forLayerTiles(size: Size, cb: (xPos: number, yPos: number) => void) {
+  for (let y = 0; y < size.height; y++) {
+    for (let x = 0; x < size.width; x++) {
+      cb(x, y)
+    }
+  }
 }
 
 export function tilePosToPx(pos: Pos, tileSize: Size): Pos {
@@ -46,16 +53,30 @@ export function isSamePos(a: Pos, b: Pos) {
   return a.x === b.x && a.y === b.y
 }
 
-export function getTilesAt(pos: Pos, tiles: LayerTile[]): LayerTile[] {
-  return tiles.filter(tile => isSamePos(pos, tile.pos))
+/** Converts array of tiles into 2d array of tile arrays, in their resective positions */
+export function tilesToLayer<T extends LayerTile>(tiles: T[], mapSize: Size): T[][][] {
+  const ret: T[][][] = make2dArray(mapSize, () => [])
+  for (let tile of tiles) {
+    ret[tile.pos.x][tile.pos.y].push(tile)
+  }
+  return ret
+}
+
+
+
+export function tilesAtPos<T extends LayerTile>(layerTiles: T[][][], pos: Pos): T[] {
+  return getTilesAt(layerTiles, pos)
+}
+export function getTilesAt<T extends LayerTile>(layerTiles: T[][][], pos: Pos): T[] {
+  return layerTiles[pos.x][pos.y]
 }
 
 export function isPassable(pos: Pos, currentMap: MapState): boolean {
   if (!inBounds(pos, currentMap.size)) return false
   if (
-    currentMap.layers.terrain.some(tile => tile.impassable && isSamePos(tile.pos, pos))
-    || currentMap.layers.structure.some(tile => tile.impassable && isSamePos(tile.pos, pos))
-    || currentMap.layers.sprites.some(tile => tile.impassable && isSamePos(tile.pos, pos))
+    currentMap.layers.terrain[pos.x][pos.y].some(tile => tile.impassable)
+    || currentMap.layers.structure[pos.x][pos.y].some(tile => tile.impassable)
+    || currentMap.layers.sprites[pos.x][pos.y].some(tile => tile.impassable)
   ) {
     return false
   }
@@ -65,9 +86,9 @@ export function isPassable(pos: Pos, currentMap: MapState): boolean {
 export function isStopBefore(pos: Pos, currentMap: MapState): boolean {
   if (!inBounds(pos, currentMap.size)) return false
   if (
-    currentMap.layers.terrain.some(tile => tile.shouldStopBefore && isSamePos(tile.pos, pos))
-    || currentMap.layers.structure.some(tile => tile.shouldStopBefore && isSamePos(tile.pos, pos))
-    || currentMap.layers.sprites.some(tile => tile.shouldStopBefore && isSamePos(tile.pos, pos))
+    currentMap.layers.terrain[pos.x][pos.y].some(tile => tile.shouldStopBefore)
+    || currentMap.layers.structure[pos.x][pos.y].some(tile => tile.shouldStopBefore)
+    || currentMap.layers.sprites[pos.x][pos.y].some(tile => tile.shouldStopBefore)
   ) {
     return true
   }
@@ -77,72 +98,72 @@ export function isStopBefore(pos: Pos, currentMap: MapState): boolean {
 export function isStopOnTop(pos: Pos, currentMap: MapState): boolean {
   if (!inBounds(pos, currentMap.size)) return false
   if (
-    currentMap.layers.terrain.some(tile => tile.shouldStopOnTop && isSamePos(tile.pos, pos))
-    || currentMap.layers.structure.some(tile => tile.shouldStopOnTop && isSamePos(tile.pos, pos))
-    || currentMap.layers.sprites.some(tile => tile.shouldStopOnTop && isSamePos(tile.pos, pos))
+    currentMap.layers.terrain[pos.x][pos.y].some(tile => tile.shouldStopOnTop)
+    || currentMap.layers.structure[pos.x][pos.y].some(tile => tile.shouldStopOnTop)
+    || currentMap.layers.sprites[pos.x][pos.y].some(tile => tile.shouldStopOnTop)
   ) {
     return true
   }
   return false
 }
 
-export function genCastle(pos: Pos, size: Size, gateSide?: Side): Pick<Layers, "terrain" | "structure"> {
-  let structure: LayerTile[] = []
+export function genCastle(mapSize: Size, pos: Pos, castleSize: Size, gateSide?: Side): Pick<Layers, "terrain" | "structure"> {
+  let structureTiles: LayerTile[] = []
 
   // TR corner
-  structure.push({ tileId: 41, pos: { x: pos.x + size.width - 1, y: pos.y }, impassable: true, })
+  structureTiles.push({ tileId: 41, pos: { x: pos.x + castleSize.width - 1, y: pos.y }, impassable: true, })
   // BR corner
-  structure.push({ tileId: 42, pos: { x: pos.x + size.width - 1, y: pos.y + size.height - 1 }, impassable: true, })
+  structureTiles.push({ tileId: 42, pos: { x: pos.x + castleSize.width - 1, y: pos.y + castleSize.height - 1 }, impassable: true, })
   // BL corner
-  structure.push({ tileId: 43, pos: { x: pos.x, y: pos.y + size.height - 1 }, impassable: true, })
+  structureTiles.push({ tileId: 43, pos: { x: pos.x, y: pos.y + castleSize.height - 1 }, impassable: true, })
   // TL corner
-  structure.push({ tileId: 44, pos: { x: pos.x, y: pos.y }, impassable: true, })
+  structureTiles.push({ tileId: 44, pos: { x: pos.x, y: pos.y }, impassable: true, })
 
 
-  for (let x = pos.x + 1; x < pos.x + size.width - 1; x++) {
-    structure.push({ tileId: 45, pos: { x, y: pos.y }, impassable: true, })
+  for (let x = pos.x + 1; x < pos.x + castleSize.width - 1; x++) {
+    structureTiles.push({ tileId: 45, pos: { x, y: pos.y }, impassable: true, })
     // Bottom wall
-    structure.push({ tileId: 47, pos: { x, y: pos.y + size.height - 1 }, impassable: true, })
+    structureTiles.push({ tileId: 47, pos: { x, y: pos.y + castleSize.height - 1 }, impassable: true, })
   }
 
-  for (let y = pos.y + 1; y < pos.y + size.height - 1; y++) {
+  for (let y = pos.y + 1; y < pos.y + castleSize.height - 1; y++) {
     // Left wall
-    structure.push({ tileId: 48, pos: { x: pos.x, y }, impassable: true, })
+    structureTiles.push({ tileId: 48, pos: { x: pos.x, y }, impassable: true, })
     // Right wall
-    structure.push({ tileId: 46, pos: { x: pos.x + size.width - 1, y }, impassable: true, })
+    structureTiles.push({ tileId: 46, pos: { x: pos.x + castleSize.width - 1, y }, impassable: true, })
   }
 
   // Replace wall with gate
   if (gateSide) {
     let gatePos: Pos = { x: -1, y: -1 }
-    const midX = Math.floor(((pos.x * 2) + size.width) / 2)
-    const midY = Math.floor(((pos.y * 2) + size.height) / 2)
+    const midX = Math.floor(((pos.x * 2) + castleSize.width) / 2)
+    const midY = Math.floor(((pos.y * 2) + castleSize.height) / 2)
     switch (gateSide) {
       case "top":
         gatePos = { x: midX, y: pos.y }
         break
       case "bottom":
-        gatePos = { x: midX, y: pos.y + size.height - 1 }
+        gatePos = { x: midX, y: pos.y + castleSize.height - 1 }
         break
       case "left":
         gatePos = { x: pos.x, y: midY }
         break
       case "right":
-        gatePos = { x: pos.x + size.height - 1, y: midY }
+        gatePos = { x: pos.x + castleSize.height - 1, y: midY }
         break
     }
-    structure = [
-      ...structure.filter(tile => !isSamePos(tile.pos, gatePos)),
+    structureTiles = [
+      ...structureTiles.filter(tile => !isSamePos(tile.pos, gatePos)),
       { tileId: 7, pos: gatePos, }, // Gate
     ]
   }
 
   const terrain = genRect<TerrainLayerTile>(
     Pos(pos.x + 1, pos.y + 1),
-    Size(size.width - 2, size.height - 2),
+    Size(castleSize.width - 2, castleSize.height - 2),
     { tileId: 294, isLit: true, isRoom: true, })
 
-  return { structure, terrain }
+  return { structure: tilesToLayer(structureTiles, mapSize), terrain: tilesToLayer(terrain, mapSize) }
 }
 
 /** Generate array of tiles to fill a rectangle */
@@ -172,8 +193,19 @@ export function getSurroundingPoses(pos: Pos, includeSelf: boolean, includeDiago
   ]
 }
 
-export function getBlankMapState(): MapState {
-  return _.cloneDeep(blankMapState)
+export function getBlankMapState(mapSize: Size): MapState {
+  return {
+    size: { width: mapSize.width, height: mapSize.height },
+    layers: {
+      terrain: make2dArray(mapSize, []),
+      structure: make2dArray(mapSize, []),
+      traps: make2dArray(mapSize, []),
+      items: make2dArray(mapSize, []),
+      sprites: make2dArray(mapSize, []),
+      projectiles: make2dArray(mapSize, []),
+    },
+    discovered: make2dArray(mapSize, false),
+  }
 }
 
 export function genDungeonRoom(pos: Pos, size: Size, isLit: boolean = false): TerrainLayerTile[] {
@@ -321,7 +353,7 @@ export function genStairsUp(map: MapState, stairsCount: number): LayerTile[] {
   const floorLitTile = getTilemapInfoByKey("DUNGEON_FLOOR_LIT")
   while (poses.length > 0 && stairsMade < stairsCount) {
     const pos = poses.splice(Math.floor(Math.random() * poses.length), 1)[0]
-    const tiles = getTilesAt(pos, map.layers.terrain)
+    const tiles = getTilesAt(map.layers.terrain, pos)
     if (tiles.length === 1 && (
       tiles[0].tileId === floorTile.tileId
       || tiles[0].tileId === floorLitTile.tileId)) {
@@ -341,7 +373,7 @@ export function genStairsDown(map: MapState, stairsCount: number): LayerTile[] {
   const floorLitTile = getTilemapInfoByKey("DUNGEON_FLOOR_LIT")
   while (poses.length > 0 && stairsMade < stairsCount) {
     const pos = poses.splice(Math.floor(Math.random() * poses.length), 1)[0]
-    const tiles = getTilesAt(pos, map.layers.terrain)
+    const tiles = getTilesAt(map.layers.terrain, pos)
     if (tiles.length === 1 && (
       tiles[0].tileId === floorTile.tileId
       || tiles[0].tileId === floorLitTile.tileId)) {
@@ -353,30 +385,33 @@ export function genStairsDown(map: MapState, stairsCount: number): LayerTile[] {
 }
 
 export function genMap(mapSize: Size, roomCount: number): MapState {
-  const newMap: MapState = getBlankMapState()
+  const newMap: MapState = getBlankMapState(mapSize)
   newMap.size = { ...mapSize }
 
+  let terrainTiles: TerrainLayerTile[]
   const dungeonRooms = genDungeonRooms(mapSize, roomCount)
-  newMap.layers.terrain = dungeonRooms.flat()
+  terrainTiles = dungeonRooms.flat()
 
   const dungeonPaths = genDungeonPaths(mapSize, dungeonRooms)
-  newMap.layers.terrain = [...newMap.layers.terrain, ...dungeonPaths]
+  terrainTiles = [...terrainTiles, ...dungeonPaths]
+
+  newMap.layers.terrain = tilesToLayer(terrainTiles, mapSize)
 
   const stairsUp = genStairsUp(newMap, 3)
-  newMap.layers.terrain = [...newMap.layers.terrain, ...stairsUp]
+  newMap.layers.terrain = mergeTilesToLayer(mapSize, stairsUp, newMap.layers.terrain)
 
   const stairsDown = genStairsDown(newMap, 3)
-  newMap.layers.terrain = [...newMap.layers.terrain, ...stairsDown]
+  newMap.layers.terrain = mergeTilesToLayer(mapSize, stairsDown, newMap.layers.terrain)
 
-  newMap.layers.terrain = fillRemaining(mapSize, newMap.layers.terrain, {
-    tileId: getTilemapInfoByKey("DUNGEON_WALL").tileId,
-    impassable: true,
-  })
+  newMap.layers.terrain = fillRemaining(
+    mapSize,
+    newMap.layers.terrain,
+    {
+      tileId: getTilemapInfoByKey("DUNGEON_WALL").tileId,
+      impassable: true,
+    }
+  )
   return newMap
-}
-
-export function tilesAtPos<T extends LayerTile>(layerTiles: T[], pos: Pos): T[] {
-  return layerTiles.filter(tile => isSamePos(tile.pos, pos))
 }
 
 /** Check whether pos is in bounds of [0, 0] to size */
@@ -388,33 +423,26 @@ export function inBounds(pos: Pos, size: Size): boolean {
 }
 
 /** Fill empty positions with tile, and returns new layer array */
-export function fillRemaining(size: Size, layer: LayerTile[], tile: Omit<LayerTile, "pos">) {
-  const touched = make2dArray(size, false)
-  const newLayer = [...layer]
-
-  layer.forEach(tile => touched[tile.pos.x][tile.pos.y] = true)
-
-  for (let y = 0; y < size.height; y++) {
-    for (let x = 0; x < size.width; x++) {
-      if (!touched[x][y]) {
-        newLayer.push({
-          ...tile,
-          pos: Pos(x, y),
-        })
-      }
+export function fillRemaining(size: Size, layer: LayerTile[][][], tile: Omit<LayerTile, "pos">) {
+  // const touched = make2dArray(size, false)
+  const newLayer = _.cloneDeep(layer)
+  forLayerTiles(size, (x, y) => {
+    if (layer[x][y].length === 0) {
+      newLayer[x][y].push({
+        ...tile,
+        pos: Pos(x, y),
+      })
     }
-  }
+  })
   return newLayer
 }
 
 // Returns all possible poses from specific size
 export function getPosesFromSize(size: Size): Pos[] {
   const poses: Pos[] = []
-  for (let y = 0; y < size.height; y++) {
-    for (let x = 0; x < size.width; x++) {
-      poses.push(Pos(x, y))
-    }
-  }
+  forLayerTiles(size, (x, y) => {
+    poses.push(Pos(x, y))
+  })
   return poses
 }
 
@@ -482,4 +510,23 @@ export function incrementPosByDirection(pos: Pos, direction: Direction, incremen
     pos.x + dx,
     pos.y + dy
   )
+}
+
+export function mergeLayers<T extends LayerTile>(mapSize: Size, a: T[][][], b: T[][][]): T[][][] {
+  const newLayer = make2dArray<T[]>(mapSize, (x, y) => [])
+  forLayerTiles(mapSize, (x, y) => {
+    newLayer[x][y] = [
+      ...getTilesAt(a, Pos(x, y)),
+      ...getTilesAt(b, Pos(x, y)),
+    ]
+  })
+  return newLayer
+}
+
+export function mergeTilesToLayer<T extends LayerTile>(mapSize: Size, tiles: T[], layer: T[][][]): T[][][] {
+  const newLayer = _.cloneDeep(layer)
+  for (let tile of tiles) {
+    newLayer[tile.pos.x][tile.pos.y].push(tile)
+  }
+  return newLayer
 }

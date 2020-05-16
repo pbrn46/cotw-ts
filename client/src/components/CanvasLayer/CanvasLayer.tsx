@@ -2,11 +2,11 @@ import React, { useRef, useEffect } from 'react'
 import { useSelector } from '../../redux/store'
 import { currentMapPxSizeSelector } from '../../redux/reducers/currentMap'
 import { useDrawTile } from '../../lib/drawUtil'
-import { inBounds } from '../../lib/mapUtil'
+import { getTilesAt, Pos } from '../../lib/mapUtil'
 
 
 type CanvasLayerProps = {
-  layer: LayerTile[]
+  layer: LayerTile[][][]
 }
 export default React.memo(function CanvasLayer({ layer }: CanvasLayerProps) {
   const mapSize = useSelector(state => state.currentMap.size)
@@ -22,17 +22,20 @@ export default React.memo(function CanvasLayer({ layer }: CanvasLayerProps) {
     if (!ctx) return
     ctx.clearRect(0, 0, mapPxSize.width, mapPxSize.height)
 
-    for (let layerTile of layer) {
-      if (!inBounds(layerTile.pos, mapSize)) continue
-      const { x, y } = layerTile.pos
-      if (shroudMode === "visible" || discovered[x]?.[y]) {
-        draw(layerTile.tileId, layerTile.pos)
-      } else {
-        if (shroudMode === "alpha") {
-          ctx.save()
-          ctx.globalAlpha = 0.3
-          draw(layerTile.tileId, layerTile.pos)
-          ctx.restore()
+    for (let y = 0; y < mapSize.height; y++) {
+      for (let x = 0; x < mapSize.width; x++) {
+        const tiles = getTilesAt(layer, Pos(x, y))
+        for (let layerTile of tiles) {
+          if (shroudMode === "visible" || discovered[x]?.[y]) {
+            draw(layerTile.tileId, layerTile.pos)
+          } else {
+            if (shroudMode === "alpha") {
+              ctx.save()
+              ctx.globalAlpha = 0.3
+              draw(layerTile.tileId, layerTile.pos)
+              ctx.restore()
+            }
+          }
         }
       }
     }
