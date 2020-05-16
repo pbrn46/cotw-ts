@@ -1,6 +1,7 @@
 import { AppThunk } from "../store"
 import { setCurrentMap, discoverSurroundings } from "./currentMap"
-import { genDungeonMap, Size } from "../../lib/mapUtil"
+import { Size } from "../../lib/mapUtil"
+import { genDungeonMap } from "../../lib/generators"
 import { randomHeroPos } from "./hero"
 import { setShroudMode } from "./config"
 

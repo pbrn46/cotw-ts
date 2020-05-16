@@ -1,5 +1,6 @@
-import { genCastle, make2dArray, fillRemaining, tilesToLayer, mergeLayers, uniqueKey, makeTile, Pos } from "../lib/mapUtil"
+import { make2dArray, fillRemaining, tilesToLayer, mergeLayers, uniqueKey, makeTile, Pos } from "../lib/mapUtil"
 import { getTilemapInfoByKey } from "../assets/tilemap"
+import { genCastle } from "../lib/generators"
 
 
 const mapSize: Size = { width: 80, height: 40 }
