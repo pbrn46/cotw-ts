@@ -24,7 +24,7 @@ const initialState: InventoryState = {
   boots: null,
   pack: {
     itemKey: uniqueKey(),
-    tileId: getTilemapInfoByKey("BAG").tileId,
+    tileId: getTilemapInfoByKey("PACK").tileId,
     itemType: "container",
     contents: [],
     weight: 500,

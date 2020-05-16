@@ -1,6 +1,7 @@
 import React from 'react'
 import { Grid, Typography } from '@material-ui/core'
 import { useSelector } from '../../redux/store'
+import CanvasTileSingle from '../CanvasTileSingle'
 
 
 export default function InventoryBags() {
@@ -11,9 +12,9 @@ export default function InventoryBags() {
     </Grid>
     <Grid item>
       <Typography>Bag Items</Typography>
-      {bagItems && bagItems.map(bagItem => <div key={bagItem.itemKey}>
-        {bagItem.tileId}
-      </div>)}
+      {bagItems && bagItems.map(bagItem => <span key={bagItem.itemKey}>
+        <CanvasTileSingle tileId={bagItem.tileId} />
+      </span>)}
     </Grid>
   </Grid>
 }

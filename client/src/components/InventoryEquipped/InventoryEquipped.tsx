@@ -8,32 +8,32 @@ export default function InventoryEquipped() {
   return <table className="InventoryEquippedTable">
     <tbody>
       <tr>
-        <EquippedItemBox label="Armor" />
-        <EquippedItemBox label="Neck" />
-        <EquippedItemBox label="Overgarment" />
-        <EquippedItemBox label="Helm" />
-        <EquippedItemBox label="Shield" />
+        <EquippedItemBox label="Armor" type="armor" />
+        <EquippedItemBox label="Neck" type="neckwear" />
+        <EquippedItemBox label="Overgarment" type="overgarment" />
+        <EquippedItemBox label="Helm" type="helmet" />
+        <EquippedItemBox label="Shield" type="shield" />
       </tr>
       <tr>
-        <EquippedItemBox label="Bracers" />
+        <EquippedItemBox label="Bracers" type="bracers" />
         <td colSpan={3} rowSpan={5}></td>
-        <EquippedItemBox label="Gauntlets" />
+        <EquippedItemBox label="Gauntlets" type="gauntlets" />
       </tr>
       <tr>
-        <EquippedItemBox label="Weapon" />
-        <EquippedItemBox label="Free Hand" />
+        <EquippedItemBox label="Weapon" type="weapon" />
+        <EquippedItemBox label="Free Hand" type="freeHand" />
       </tr>
       <tr>
-        <EquippedItemBox label="Right Ring" />
-        <EquippedItemBox label="Left Ring" />
+        <EquippedItemBox label="Right Ring" type="rightRing" />
+        <EquippedItemBox label="Left Ring" type="leftRing" />
       </tr>
       <tr>
-        <EquippedItemBox label="Belt" />
-        <EquippedItemBox label="Boots" />
+        <EquippedItemBox label="Belt" type="belt" />
+        <EquippedItemBox label="Boots" type="boots" />
       </tr>
       <tr>
-        <EquippedItemBox label="Pack" />
-        <EquippedItemBox label="Purse" />
+        <EquippedItemBox label="Pack" type="pack" />
+        <EquippedItemBox label="Purse" type="purse" />
       </tr>
     </tbody>
   </table>

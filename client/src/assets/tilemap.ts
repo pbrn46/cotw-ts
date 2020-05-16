@@ -45,6 +45,8 @@ const tilemapInfoByKey = createTilemapInfoByKey({
   "STAIRS_UP": { tileId: 4, label: "Stairs, Up" },
   "STAIRS_DOWN": { tileId: 5, label: "Stairs, Down" },
   "BAG": { tileId: 81, label: "Bag" },
+  "CHEST": { tileId: 82, label: "Chest" },
+  "PACK": { tileId: 83, label: "Pack" },
   "HERO_MALE": { tileId: 231, label: "Hero (Male)" },
   "HERO_FEMALE": { tileId: 232, label: "Hero (Female)" },
   "GRASS": { tileId: 289, label: "Grass" },
