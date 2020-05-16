@@ -9,7 +9,7 @@ const castle = genCastle(mapSize, { x: 10, y: 2 }, { width: 9, height: 9 }, "bot
 const spritesTiles: LayerTile[] = [
   { tileId: 263, pos: { x: 2, y: 2 }, impassable: true },
 ]
-let spritesLayer = tilesToLayer(spritesTiles, mapSize)
+let spritesLayer = tilesToLayer(mapSize, spritesTiles)
 
 let terrainTiles: TerrainLayerTile[] = [
   { tileId: 290, pos: { x: 14, y: 11 }, },
@@ -26,7 +26,7 @@ let terrainTiles: TerrainLayerTile[] = [
 ]
 let terrainLayer = mergeLayers(
   mapSize,
-  tilesToLayer(terrainTiles, mapSize),
+  tilesToLayer(mapSize, terrainTiles),
   castle.terrain,
 )
 terrainLayer = fillRemaining(mapSize, terrainLayer, {
@@ -36,14 +36,14 @@ terrainLayer = fillRemaining(mapSize, terrainLayer, {
 const itemsTiles: LayerTile[] = [
   { tileId: 85, pos: { x: 2, y: 3 }, shouldStopOnTop: true }
 ]
-let itemsLayer = tilesToLayer(itemsTiles, mapSize)
+let itemsLayer = tilesToLayer(mapSize, itemsTiles)
 
 const structureTiles: LayerTile[] = [
   //Stairs Down
   { tileId: 5, pos: { x: 14, y: 4 }, },
 ]
 let structureLayer = mergeLayers(mapSize,
-  tilesToLayer(structureTiles, mapSize),
+  tilesToLayer(mapSize, structureTiles),
   castle.structure,
 )
 

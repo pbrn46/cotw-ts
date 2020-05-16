@@ -27,7 +27,7 @@ type TerrainLayerTile = LayerTile & {
   isRoom?: boolean
 }
 
-interface Layers {
+type Layers = {
   terrain: TerrainLayerTile[][][]
   structure: LayerTile[][][]
   traps: LayerTile[][][]
