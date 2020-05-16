@@ -7,7 +7,7 @@ const mapSize: Size = { width: 80, height: 40 }
 const castle = genCastle(mapSize, { x: 10, y: 2 }, { width: 9, height: 9 }, "bottom")
 
 const spritesTiles: LayerTile[] = [
-  { tileId: 263, pos: { x: 2, y: 2 }, },
+  { tileId: 263, pos: { x: 2, y: 2 }, impassable: true },
 ]
 let spritesLayer = tilesToLayer(spritesTiles, mapSize)
 
@@ -34,7 +34,7 @@ terrainLayer = fillRemaining(mapSize, terrainLayer, {
 })
 
 const itemsTiles: LayerTile[] = [
-  { tileId: 85, pos: { x: 2, y: 3 }, }
+  { tileId: 85, pos: { x: 2, y: 3 }, shouldStopOnTop: true }
 ]
 let itemsLayer = tilesToLayer(itemsTiles, mapSize)
 
@@ -58,5 +58,5 @@ export default {
     sprites: spritesLayer,
     projectiles: [],
   },
-  discovered: make2dArray(mapSize, true),
+  discovered: make2dArray(mapSize, false),
 } as MapState

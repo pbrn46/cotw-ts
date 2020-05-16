@@ -89,6 +89,7 @@ export function isStopBefore(pos: Pos, currentMap: MapState): boolean {
     currentMap.layers.terrain[pos.x][pos.y].some(tile => tile.shouldStopBefore)
     || currentMap.layers.structure[pos.x][pos.y].some(tile => tile.shouldStopBefore)
     || currentMap.layers.sprites[pos.x][pos.y].some(tile => tile.shouldStopBefore)
+    || currentMap.layers.items[pos.x][pos.y].some(tile => tile.shouldStopBefore)
   ) {
     return true
   }
@@ -101,6 +102,7 @@ export function isStopOnTop(pos: Pos, currentMap: MapState): boolean {
     currentMap.layers.terrain[pos.x][pos.y].some(tile => tile.shouldStopOnTop)
     || currentMap.layers.structure[pos.x][pos.y].some(tile => tile.shouldStopOnTop)
     || currentMap.layers.sprites[pos.x][pos.y].some(tile => tile.shouldStopOnTop)
+    || currentMap.layers.items[pos.x][pos.y].some(tile => tile.shouldStopOnTop)
   ) {
     return true
   }
@@ -154,7 +156,7 @@ export function genCastle(mapSize: Size, pos: Pos, castleSize: Size, gateSide?: 
     }
     structureTiles = [
       ...structureTiles.filter(tile => !isSamePos(tile.pos, gatePos)),
-      { tileId: 7, pos: gatePos, }, // Gate
+      { tileId: 7, pos: gatePos, shouldStopOnTop: true }, // Gate
     ]
   }
 
