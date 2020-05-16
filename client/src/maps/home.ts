@@ -1,4 +1,4 @@
-import { genCastle, make2dArray, fillRemaining, tilesToLayer, mergeLayers } from "../lib/mapUtil"
+import { genCastle, make2dArray, fillRemaining, tilesToLayer, mergeLayers, uniqueKey, makeTile, Pos } from "../lib/mapUtil"
 import { getTilemapInfoByKey } from "../assets/tilemap"
 
 
@@ -7,21 +7,21 @@ const mapSize: Size = { width: 80, height: 40 }
 const castle = genCastle(mapSize, { x: 10, y: 2 }, { width: 9, height: 9 }, "bottom")
 
 const spritesTiles: LayerTile[] = [
-  { tileId: 263, pos: { x: 2, y: 2 }, impassable: true },
+  makeTile(264, Pos(2, 2), { impassable: true }),
 ]
 let spritesLayer = tilesToLayer(mapSize, spritesTiles)
 
 let terrainTiles: TerrainLayerTile[] = [
-  { tileId: 290, pos: { x: 14, y: 11 }, },
-  { tileId: 290, pos: { x: 14, y: 12 }, },
-  { tileId: 290, pos: { x: 14, y: 13 }, },
-  { tileId: 290, pos: { x: 14, y: 14 }, },
-  { tileId: 290, pos: { x: 14, y: 15 }, },
+  makeTile(290, Pos(14, 11)),
+  makeTile(290, Pos(14, 12)),
+  makeTile(290, Pos(14, 13)),
+  makeTile(290, Pos(14, 14)),
+  makeTile(290, Pos(14, 15)),
 
-  { tileId: 305, pos: { x: 12, y: 13 }, impassable: true, },
-  { tileId: 306, pos: { x: 13, y: 13 }, impassable: true, },
-  { tileId: 321, pos: { x: 12, y: 14 }, impassable: true, },
-  { tileId: 322, pos: { x: 13, y: 14 }, impassable: true, },
+  makeTile(305, Pos(12, 13), { impassable: true, }),
+  makeTile(306, Pos(13, 13), { impassable: true, }),
+  makeTile(321, Pos(12, 14), { impassable: true, }),
+  makeTile(322, Pos(13, 14), { impassable: true, }),
   // ...castle.terrain,
 ]
 let terrainLayer = mergeLayers(
@@ -34,9 +34,9 @@ terrainLayer = fillRemaining(mapSize, terrainLayer, {
 })
 
 const itemsTiles: ItemLayerTile[] = [
-  {
-    tileId: 85, pos: { x: 2, y: 3 }, shouldStopOnTop: true,
-    itemProps: {
+  makeTile<ItemLayerTile>(85, Pos(2, 3), {
+    shouldStopOnTop: true, itemProps: {
+      itemKey: uniqueKey(),
       bulk: 500,
       weight: 500,
       tileId: 85,
@@ -44,13 +44,13 @@ const itemsTiles: ItemLayerTile[] = [
       buyValue: 100,
       itemType: "container"
     }
-  }
+  })
 ]
 let itemsLayer = tilesToLayer(mapSize, itemsTiles)
 
 const structureTiles: LayerTile[] = [
   //Stairs Down
-  { tileId: 5, pos: { x: 14, y: 4 }, },
+  makeTile(5, Pos(14, 4)),
 ]
 let structureLayer = mergeLayers(mapSize,
   tilesToLayer(mapSize, structureTiles),

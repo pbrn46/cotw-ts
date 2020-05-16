@@ -3,6 +3,7 @@ import { AppThunk } from '../store'
 import { isPassable, getRandomPassablePos, inBounds, incrementPosByDirection, Pos, isStopOnTop, isStopBefore, getTilesAt } from '../../lib/mapUtil'
 import { discoverSurroundings, openDoorAtPos, removeItem } from './currentMap'
 import { batch } from 'react-redux'
+import { addMessage } from './messages'
 
 type HeroState = {
   pos: Pos,
@@ -85,7 +86,17 @@ export const heroSprintByDirection = (direction: Direction): AppThunk => (dispat
 export const pickupItem = (): AppThunk => (dispatch, getState) => {
   const state = getState()
   const items = getTilesAt(state.currentMap.layers.items, state.hero.pos)
+  if (!state.inventory.pack) {
+    dispatch(addMessage({ message: "You have no pack to store it in!", severity: "normal" }))
+    return
+  }
+  if (!state.inventory.pack.contents) {
+    dispatch(addMessage({ message: "Your pack can not store things!", severity: "normal" }))
+    return
+  }
   for (let item of items) {
+    if (!item.itemProps) continue
+    state.inventory.pack.contents.push(item.itemProps)
     dispatch(removeItem(item))
   }
 }

@@ -15,6 +15,7 @@ type Pos = {
 type TileId = number
 
 type LayerTile = {
+  tileKey: string,
   tileId: TileId,
   pos: Pos,
   impassable?: boolean
@@ -79,7 +80,8 @@ type ItemType = Omit<EquippableType, "rightRing" | "leftRing" | "freeHand">
   | "potion" | "scroll" | "ring" | "wand" | "container"
 
 type InventoryItem = {
-  tileId: TileId
+  tileId: TileId,
+  itemKey: string,
   weight: number,
   bulk: number,
   sellValue: number,

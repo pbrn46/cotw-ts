@@ -1,4 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
+import { getTilemapInfoByKey } from '../../assets/tilemap'
+import { uniqueKey } from '../../lib/mapUtil'
 
 
 type EquippedItem = InventoryItem | null
@@ -20,7 +22,16 @@ const initialState: InventoryState = {
   leftRing: null,
   belt: null,
   boots: null,
-  pack: null,
+  pack: {
+    itemKey: uniqueKey(),
+    tileId: getTilemapInfoByKey("BAG").tileId,
+    itemType: "container",
+    contents: [],
+    weight: 500,
+    bulk: 500,
+    sellValue: 50,
+    buyValue: 100
+  },
   purse: null,
 }
 const slice = createSlice({

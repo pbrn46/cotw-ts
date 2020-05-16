@@ -2,7 +2,7 @@ import { PayloadAction, createSlice, createSelector } from '@reduxjs/toolkit'
 import { RootState } from './reducers'
 import { tilePxSizeSelector } from './config'
 import { home } from '../../maps'
-import { getSurroundingPoses, getBlankMapState, make2dArray, tilesAtPos, inBounds, Size, forXY, isSamePos } from '../../lib/mapUtil'
+import { getSurroundingPoses, getBlankMapState, make2dArray, tilesAtPos, inBounds, Size, forXY, isSamePos, makeTile } from '../../lib/mapUtil'
 import { AppThunk } from '../store'
 import { getTilemapInfoByKey } from '../../assets/tilemap'
 
@@ -35,7 +35,11 @@ const slice = createSlice({
       const index = state.layers.terrain[x][y].findIndex(tile =>
         tile.tileId === doorClosedTile.tileId)
       if (index >= 0) {
-        state.layers.terrain[x][y][index] = { tileId: doorOpenedTile.tileId, pos: action.payload, shouldStopOnTop: true }
+        state.layers.terrain[x][y][index] = makeTile(
+          doorOpenedTile.tileId,
+          action.payload, {
+          shouldStopOnTop: true
+        })
       }
     },
     removeItem: (state, action: PayloadAction<ItemLayerTile>) => {

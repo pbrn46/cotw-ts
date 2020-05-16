@@ -1,14 +1,19 @@
 import React from 'react'
-import { Grid } from '@material-ui/core'
+import { Grid, Typography } from '@material-ui/core'
+import { useSelector } from '../../redux/store'
 
 
 export default function InventoryBags() {
+  const bagItems = useSelector(state => state.inventory.pack?.contents)
   return <Grid container direction="column">
     <Grid item>
       Floor
     </Grid>
     <Grid item>
-      Bag
+      <Typography>Bag Items</Typography>
+      {bagItems && bagItems.map(bagItem => <div>
+        {bagItem.tileId}
+      </div>)}
     </Grid>
   </Grid>
 }

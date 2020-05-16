@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import { getTilemapInfoByKey } from '../assets/tilemap'
+import { v4 as uuidv4 } from 'uuid'
 
 
 export function Pos(x: number, y: number): Pos {
@@ -54,6 +55,10 @@ export function tileSizeToPx(size: Size, tileSize: Size): Size {
 /** Returns true if positions are the same */
 export function isSamePos(a: Pos, b: Pos) {
   return a.x === b.x && a.y === b.y
+}
+
+export function uniqueKey() {
+  return uuidv4()
 }
 
 /** Converts array of tiles into 2d array of tile arrays, in their resective positions */
@@ -121,30 +126,65 @@ export function isStopOnTop(pos: Pos, currentMap: MapState): boolean {
   return false
 }
 
+export function makeTile<T extends LayerTile>(tileId: number, pos: Pos, otherProps?: Omit<T, "tileId" | "pos" | "tileKey">): T {
+  return { tileId, pos, tileKey: uniqueKey(), ...otherProps } as T
+}
+
 export function genCastle(mapSize: Size, pos: Pos, castleSize: Size, gateSide?: Side): Pick<Layers, "terrain" | "structure"> {
   let structureTiles: LayerTile[] = []
 
   // TR corner
-  structureTiles.push({ tileId: 41, pos: { x: pos.x + castleSize.width - 1, y: pos.y }, impassable: true, })
+  structureTiles.push(makeTile(
+    41,
+    Pos(pos.x + castleSize.width - 1, pos.y),
+    { impassable: true },
+  ))
   // BR corner
-  structureTiles.push({ tileId: 42, pos: { x: pos.x + castleSize.width - 1, y: pos.y + castleSize.height - 1 }, impassable: true, })
+  structureTiles.push(makeTile(
+    42,
+    Pos(pos.x + castleSize.width - 1, pos.y + castleSize.height - 1),
+    { impassable: true },
+  ))
   // BL corner
-  structureTiles.push({ tileId: 43, pos: { x: pos.x, y: pos.y + castleSize.height - 1 }, impassable: true, })
+  structureTiles.push(makeTile(
+    43,
+    Pos(pos.x, pos.y + castleSize.height - 1),
+    { impassable: true },
+  ))
   // TL corner
-  structureTiles.push({ tileId: 44, pos: { x: pos.x, y: pos.y }, impassable: true, })
-
+  structureTiles.push(makeTile(
+    44,
+    Pos(pos.x, pos.y),
+    { impassable: true },
+  ))
 
   for (let x = pos.x + 1; x < pos.x + castleSize.width - 1; x++) {
-    structureTiles.push({ tileId: 45, pos: { x, y: pos.y }, impassable: true, })
+    structureTiles.push(makeTile(
+      45,
+      Pos(x, pos.y),
+      { impassable: true },
+    ))
     // Bottom wall
-    structureTiles.push({ tileId: 47, pos: { x, y: pos.y + castleSize.height - 1 }, impassable: true, })
+    structureTiles.push(makeTile(
+      47,
+      Pos(x, pos.y + castleSize.height - 1),
+      { impassable: true },
+    ))
   }
 
   for (let y = pos.y + 1; y < pos.y + castleSize.height - 1; y++) {
     // Left wall
-    structureTiles.push({ tileId: 48, pos: { x: pos.x, y }, impassable: true, })
+    structureTiles.push(makeTile(
+      48,
+      Pos(pos.x, y),
+      { impassable: true },
+    ))
     // Right wall
-    structureTiles.push({ tileId: 46, pos: { x: pos.x + castleSize.width - 1, y }, impassable: true, })
+    structureTiles.push(makeTile(
+      46,
+      Pos(pos.x + castleSize.width - 1, y),
+      { impassable: true },
+    ))
   }
 
   // Replace wall with gate
@@ -168,14 +208,14 @@ export function genCastle(mapSize: Size, pos: Pos, castleSize: Size, gateSide?: 
     }
     structureTiles = [
       ...structureTiles.filter(tile => !isSamePos(tile.pos, gatePos)),
-      { tileId: 7, pos: gatePos, shouldStopOnTop: true }, // Gate
+      makeTile(7, gatePos, { shouldStopOnTop: true }), // Gate
     ]
   }
 
   const terrain = genRect<TerrainLayerTile>(
     Pos(pos.x + 1, pos.y + 1),
     Size(castleSize.width - 2, castleSize.height - 2),
-    { tileId: 294, isLit: true, isRoom: true, })
+    { tileId: 294, isLit: true, isRoom: true, tileKey: uniqueKey(), })
 
   return {
     structure: tilesToLayer(mapSize, structureTiles),
@@ -231,7 +271,7 @@ export function genDungeonRoom(pos: Pos, size: Size, isLit: boolean = false): Te
   if (!floorTileId) throw new Error("Invalid tile key")
   for (let y = pos.y; y < pos.y + size.height; y++) {
     for (let x = pos.x; x < pos.x + size.width; x++) {
-      terrain.push({ tileId: floorTileId, pos: { x, y }, isRoom: true, isLit })
+      terrain.push(makeTile(floorTileId, Pos(x, y), { isRoom: true, isLit }))
     }
   }
   return terrain
@@ -323,11 +363,11 @@ export function genDungeonPaths(mapSize: Size, dungeonRooms: TerrainLayerTile[][
       .find(pos => inBounds(pos, mapSize) && terrainTouched[pos.x][pos.y])
     const startDirection = roomStartPos ? getDirection(roomStartPos, startPos) : "none"
 
-    let newPath = []
+    let newPath: TerrainLayerTile[] = []
     const doorChance = 0.5
     const doorOrFloorTile = Math.random() < doorChance
-      ? { tileId: doorClosedTile.tileId, pos: startPos, shouldStopOnTop: true, shouldStopBefore: true }
-      : { tileId: floorTile.tileId, pos: startPos, shouldStopOnTop: true }
+      ? { tileId: doorClosedTile.tileId, pos: startPos, shouldStopOnTop: true, shouldStopBefore: true, tileKey: uniqueKey() }
+      : { tileId: floorTile.tileId, pos: startPos, shouldStopOnTop: true, tileKey: uniqueKey() }
     newPath.push(doorOrFloorTile)
     let curPos = incrementPosByDirection(startPos, startDirection)
     let brokenByPath = false
@@ -337,7 +377,7 @@ export function genDungeonPaths(mapSize: Size, dungeonRooms: TerrainLayerTile[][
       && !terrainTouched[curPos.x][curPos.y]
       && !pathTouched[curPos.x][curPos.y]
     ) {
-      newPath.push({ tileId: floorTile.tileId, pos: curPos })
+      newPath.push(makeTile(floorTile.tileId, curPos))
       newPathTouched[curPos.x][curPos.y] = true
 
       const surroundingPoses = getSurroundingPoses(curPos, false, false)
@@ -373,7 +413,8 @@ export function genStairsUp(map: MapState, stairsCount: number): LayerTile[] {
     if (tiles.length === 1 && (
       tiles[0].tileId === floorTile.tileId
       || tiles[0].tileId === floorLitTile.tileId)) {
-      stairs.push({ tileId: stairsUpTile.tileId, pos, shouldStopOnTop: true })
+      stairs.push(
+        makeTile(stairsUpTile.tileId, pos, { shouldStopOnTop: true }))
       stairsMade++
     }
   }
@@ -393,7 +434,7 @@ export function genStairsDown(map: MapState, stairsCount: number): LayerTile[] {
     if (tiles.length === 1 && (
       tiles[0].tileId === floorTile.tileId
       || tiles[0].tileId === floorLitTile.tileId)) {
-      stairs.push({ tileId: stairsDownTile.tileId, pos, shouldStopOnTop: true })
+      stairs.push(makeTile(stairsDownTile.tileId, pos, { shouldStopOnTop: true }))
       stairsMade++
     }
   }
@@ -418,7 +459,22 @@ export function genItems(map: MapState, itemsCount: number): ItemLayerTile[] {
       && itemsTiles.length === 0
       && (terrainTiles[0].tileId === floorTile.tileId
         || terrainTiles[0].tileId === floorLitTile.tileId)) {
-      items.push({ tileId: bagTile.tileId, pos, shouldStopOnTop: true })
+      items.push(makeTile(
+        bagTile.tileId,
+        pos,
+        {
+          shouldStopOnTop: true,
+          itemProps: {
+            tileId: bagTile.tileId,
+            itemKey: uuidv4(),
+            weight: 50,
+            bulk: 50,
+            sellValue: 50,
+            buyValue: 100,
+            itemType: "container",
+          },
+        }
+      ))
       itemsMade++
     }
   }
@@ -440,7 +496,7 @@ export function genDungeonMap(mapSize: Size, roomCount: number): MapState {
   const stairsDown = genStairsDown(newMap, 3)
   newMap.layers.terrain = mergeTilesToLayer(newMap.layers.terrain, stairsDown)
 
-  const items = genItems(newMap, 5)
+  const items = genItems(newMap, 25)
   newMap.layers.items = mergeTilesToLayer(newMap.layers.items, items)
 
   newMap.layers.terrain = fillRemaining(
@@ -463,7 +519,7 @@ export function inBounds(pos: Pos, size: Size): boolean {
 }
 
 /** Fill empty positions with tile, and returns new layer array */
-export function fillRemaining(size: Size, layer: LayerTile[][][], tile: Omit<LayerTile, "pos">) {
+export function fillRemaining(size: Size, layer: LayerTile[][][], tile: Omit<LayerTile, "pos" | "tileKey">) {
   // const touched = make2dArray(size, false)
   const newLayer = _.cloneDeep(layer)
   forXY(size, (x, y) => {
@@ -471,6 +527,7 @@ export function fillRemaining(size: Size, layer: LayerTile[][][], tile: Omit<Lay
       newLayer[x][y].push({
         ...tile,
         pos: Pos(x, y),
+        tileKey: uniqueKey()
       })
     }
   })
