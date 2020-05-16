@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { useDispatch } from "../redux/store"
-import { heroWalkByDirection, heroSprintByDirection } from "../redux/reducers/hero"
+import { heroWalkByDirection, heroSprintByDirection, pickupItem } from "../redux/reducers/hero"
 import { useHistory } from "react-router-dom"
 
 
@@ -54,6 +54,10 @@ const getHomeKeyHandlers: GetKeyHandlersFn = (dispatch, history) => {
     },
     "i": e => {
       history.replace('/inventory')
+      return true
+    },
+    "g": e => {
+      dispatch(pickupItem())
       return true
     }
   }

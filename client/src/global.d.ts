@@ -27,11 +27,15 @@ type TerrainLayerTile = LayerTile & {
   isRoom?: boolean
 }
 
+type ItemLayerTile = LayerTile & {
+  itemProps?: InventoryItem
+}
+
 type Layers = {
   terrain: TerrainLayerTile[][][]
   structure: LayerTile[][][]
   traps: LayerTile[][][]
-  items: LayerTile[][][]
+  items: ItemLayerTile[][][]
   sprites: LayerTile[][][]
   projectiles: LayerTile[][][]
 }

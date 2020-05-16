@@ -293,7 +293,6 @@ export function genDungeonRooms(mapSize: Size, rooms: number): TerrainLayerTile[
     })
     getSurroundingPosesArray(roomLayer, mapSize).forEach(pos => roomTouched[pos.x][pos.y] = true)
     newLayers.push(roomLayer)
-    // newLayer = [...newLayer, ...roomLayer]
     roomCount++
   }
 
@@ -401,6 +400,31 @@ export function genStairsDown(map: MapState, stairsCount: number): LayerTile[] {
   return stairs
 }
 
+export function genItems(map: MapState, itemsCount: number): ItemLayerTile[] {
+  const items: ItemLayerTile[] = []
+
+  const bagTile = getTilemapInfoByKey("BAG")
+
+  const poses = getPosesFromSize(map.size)
+  const floorTile = getTilemapInfoByKey("DUNGEON_FLOOR")
+  const floorLitTile = getTilemapInfoByKey("DUNGEON_FLOOR_LIT")
+  let itemsMade = 0
+  while (poses.length > 0 && itemsMade < itemsCount) {
+    const pos = poses.splice(Math.floor(Math.random() * poses.length), 1)[0]
+    if (!isPassable(pos, map)) continue
+    const terrainTiles = getTilesAt(map.layers.terrain, pos)
+    const itemsTiles = getTilesAt(map.layers.items, pos)
+    if (terrainTiles.length === 1
+      && itemsTiles.length === 0
+      && (terrainTiles[0].tileId === floorTile.tileId
+        || terrainTiles[0].tileId === floorLitTile.tileId)) {
+      items.push({ tileId: bagTile.tileId, pos, shouldStopOnTop: true })
+      itemsMade++
+    }
+  }
+  return items
+}
+
 export function genDungeonMap(mapSize: Size, roomCount: number): MapState {
   const newMap: MapState = getBlankMapState(mapSize)
 
@@ -415,6 +439,9 @@ export function genDungeonMap(mapSize: Size, roomCount: number): MapState {
 
   const stairsDown = genStairsDown(newMap, 3)
   newMap.layers.terrain = mergeTilesToLayer(newMap.layers.terrain, stairsDown)
+
+  const items = genItems(newMap, 5)
+  newMap.layers.items = mergeTilesToLayer(newMap.layers.items, items)
 
   newMap.layers.terrain = fillRemaining(
     mapSize,

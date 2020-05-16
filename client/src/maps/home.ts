@@ -33,8 +33,18 @@ terrainLayer = fillRemaining(mapSize, terrainLayer, {
   tileId: getTilemapInfoByKey("GRASS").tileId
 })
 
-const itemsTiles: LayerTile[] = [
-  { tileId: 85, pos: { x: 2, y: 3 }, shouldStopOnTop: true }
+const itemsTiles: ItemLayerTile[] = [
+  {
+    tileId: 85, pos: { x: 2, y: 3 }, shouldStopOnTop: true,
+    itemProps: {
+      bulk: 500,
+      weight: 500,
+      tileId: 85,
+      sellValue: 50,
+      buyValue: 100,
+      itemType: "container"
+    }
+  }
 ]
 let itemsLayer = tilesToLayer(mapSize, itemsTiles)
 

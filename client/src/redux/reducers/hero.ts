@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { AppThunk } from '../store'
-import { isPassable, getRandomPassablePos, inBounds, incrementPosByDirection, Pos, isStopOnTop, isStopBefore } from '../../lib/mapUtil'
-import { discoverSurroundings, openDoorAtPos } from './currentMap'
+import { isPassable, getRandomPassablePos, inBounds, incrementPosByDirection, Pos, isStopOnTop, isStopBefore, getTilesAt } from '../../lib/mapUtil'
+import { discoverSurroundings, openDoorAtPos, removeItem } from './currentMap'
 import { batch } from 'react-redux'
 
 type HeroState = {
@@ -80,4 +80,12 @@ export const heroSprintByDirection = (direction: Direction): AppThunk => (dispat
       else break
     }
   })
+}
+
+export const pickupItem = (): AppThunk => (dispatch, getState) => {
+  const state = getState()
+  const items = getTilesAt(state.currentMap.layers.items, state.hero.pos)
+  for (let item of items) {
+    dispatch(removeItem(item))
+  }
 }
