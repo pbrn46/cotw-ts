@@ -11,7 +11,7 @@ export default function InventoryBags() {
     </Grid>
     <Grid item>
       <Typography>Bag Items</Typography>
-      {bagItems && bagItems.map(bagItem => <div>
+      {bagItems && bagItems.map(bagItem => <div key={bagItem.itemKey}>
         {bagItem.tileId}
       </div>)}
     </Grid>
