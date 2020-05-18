@@ -87,6 +87,10 @@ export const heroSprintByDirection = (direction: Direction): AppThunk => (dispat
 export const pickupItem = (): AppThunk => (dispatch, getState) => {
   const state = getState()
   const itemTiles = getTilesAt(state.currentMap.layers.items, state.hero.pos)
+  if (itemTiles.length === 0) {
+    dispatch(addMessage({ message: "The floor is empty.", severity: "normal" }))
+    return
+  }
   if (!state.inventory.pack) {
     dispatch(addMessage({ message: "You have no pack to store it in!", severity: "normal" }))
     return
@@ -97,9 +101,7 @@ export const pickupItem = (): AppThunk => (dispatch, getState) => {
   }
   for (let itemTile of itemTiles) {
     if (!itemTile.itemData) continue
-    console.log(itemTile.itemData)
     dispatch(addItemToPack(itemTile.itemData))
-    // state.inventory.pack.contents.push(item.itemData)
     dispatch(removeItem(itemTile))
   }
 }
