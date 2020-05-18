@@ -19,6 +19,16 @@ export const itemDataByKey = createItemDataByKey({
     contents: [],
     itemType: "container",
   },
+  "CHEST_SMALL": {
+    tileId: getTileIdByKey("CHEST"),
+    weight: 5,
+    bulk: 5,
+    sellValue: 25,
+    buyValue: 100,
+    label: "Small Chest",
+    contents: [],
+    itemType: "container",
+  },
   "PACK_SMALL": {
     tileId: getTileIdByKey("PACK"),
     weight: 5,

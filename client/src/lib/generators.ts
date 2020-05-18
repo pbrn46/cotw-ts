@@ -1,5 +1,5 @@
 import { makeTile, Pos, tilesToLayer, Size, uniqueKey, isSamePos, make2dArray, randomSize, randomPos, getSurroundingPosesArray, getSurroundingPoses, inBounds, getDirection, incrementPosByDirection, getPosesFromSize, getTilesAt, isPassable, getBlankMapState, mergeTilesToLayer, fillRemaining, makeTileByKey, makeItemTileByKey } from "./mapUtil"
-import { getTilemapInfoByKey  } from "./tilemap"
+import { getTilemapDataByKey  } from "./tilemap"
 import _ from "lodash"
 
 
@@ -100,10 +100,10 @@ export function genCastle(mapSize: Size, pos: Pos, castleSize: Size, gateSide?: 
     Pos(pos.x + 1, pos.y + 1),
     Size(castleSize.width - 2, castleSize.height - 2),
     {
-      ...getTilemapInfoByKey("DUNGEON_FLOOR_LIT"),
+      ...getTilemapDataByKey("DUNGEON_FLOOR_LIT"),
       isLit: true,
       isRoom: true,
-      tileKey: uniqueKey(),
+      tileListKey: uniqueKey(),
     })
 
   return {
@@ -114,7 +114,7 @@ export function genCastle(mapSize: Size, pos: Pos, castleSize: Size, gateSide?: 
 
 export function genDungeonRoom(pos: Pos, size: Size, isLit: boolean = false): TerrainLayerTile[] {
   const terrain: TerrainLayerTile[] = []
-  const floorTileId = getTilemapInfoByKey("DUNGEON_FLOOR")?.tileId
+  const floorTileId = getTilemapDataByKey("DUNGEON_FLOOR")?.tileId
   if (!floorTileId) throw new Error("Invalid tile key")
   for (let y = pos.y; y < pos.y + size.height; y++) {
     for (let x = pos.x; x < pos.x + size.width; x++) {
@@ -215,9 +215,9 @@ export function genStairsUp(map: MapState, stairsCount: number): LayerTile[] {
   const poses = getPosesFromSize(map.size)
   const stairs: LayerTile[] = []
   let stairsMade = 0
-  const stairsUpTile = getTilemapInfoByKey("STAIRS_UP")
-  const floorTile = getTilemapInfoByKey("DUNGEON_FLOOR")
-  const floorLitTile = getTilemapInfoByKey("DUNGEON_FLOOR_LIT")
+  const stairsUpTile = getTilemapDataByKey("STAIRS_UP")
+  const floorTile = getTilemapDataByKey("DUNGEON_FLOOR")
+  const floorLitTile = getTilemapDataByKey("DUNGEON_FLOOR_LIT")
   while (poses.length > 0 && stairsMade < stairsCount) {
     const pos = poses.splice(Math.floor(Math.random() * poses.length), 1)[0]
     const tiles = getTilesAt(map.layers.terrain, pos)
@@ -236,9 +236,9 @@ export function genStairsDown(map: MapState, stairsCount: number): LayerTile[] {
   const poses = getPosesFromSize(map.size)
   const stairs: LayerTile[] = []
   let stairsMade = 0
-  const stairsDownTile = getTilemapInfoByKey("STAIRS_DOWN")
-  const floorTile = getTilemapInfoByKey("DUNGEON_FLOOR")
-  const floorLitTile = getTilemapInfoByKey("DUNGEON_FLOOR_LIT")
+  const stairsDownTile = getTilemapDataByKey("STAIRS_DOWN")
+  const floorTile = getTilemapDataByKey("DUNGEON_FLOOR")
+  const floorLitTile = getTilemapDataByKey("DUNGEON_FLOOR_LIT")
   while (poses.length > 0 && stairsMade < stairsCount) {
     const pos = poses.splice(Math.floor(Math.random() * poses.length), 1)[0]
     const tiles = getTilesAt(map.layers.terrain, pos)
@@ -256,8 +256,8 @@ export function genItems(map: MapState, itemsCount: number): ItemLayerTile[] {
   const items: ItemLayerTile[] = []
 
   const poses = getPosesFromSize(map.size)
-  const floorTile = getTilemapInfoByKey("DUNGEON_FLOOR")
-  const floorLitTile = getTilemapInfoByKey("DUNGEON_FLOOR_LIT")
+  const floorTile = getTilemapDataByKey("DUNGEON_FLOOR")
+  const floorLitTile = getTilemapDataByKey("DUNGEON_FLOOR_LIT")
   let itemsMade = 0
   while (poses.length > 0 && itemsMade < itemsCount) {
     const pos = poses.splice(Math.floor(Math.random() * poses.length), 1)[0]

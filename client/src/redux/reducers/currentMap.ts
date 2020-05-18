@@ -4,7 +4,7 @@ import { tilePxSizeSelector } from './config'
 import { home } from '../../maps'
 import { getSurroundingPoses, getBlankMapState, make2dArray, tilesAtPos, inBounds, Size, forXY, isSamePos, makeTile } from '../../lib/mapUtil'
 import { AppThunk } from '../store'
-import { getTilemapInfoByKey } from '../../lib/tilemap'
+import { getTilemapDataByKey } from '../../lib/tilemap'
 
 
 const initialState: MapState = getBlankMapState(Size(1, 1))
@@ -30,8 +30,8 @@ const slice = createSlice({
     openDoorAtPos: (state, action: PayloadAction<Pos>) => {
       // const newTerrain = state.layers.terrain.
       const { x, y } = action.payload
-      const doorClosedTile = getTilemapInfoByKey("DOOR_CLOSED")
-      const doorOpenedTile = getTilemapInfoByKey("DOOR_OPENED")
+      const doorClosedTile = getTilemapDataByKey("DOOR_CLOSED")
+      const doorOpenedTile = getTilemapDataByKey("DOOR_OPENED")
       const index = state.layers.terrain[x][y].findIndex(tile =>
         tile.tileId === doorClosedTile.tileId)
       if (index >= 0) {

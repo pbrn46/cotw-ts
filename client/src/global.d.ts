@@ -14,13 +14,13 @@ type Pos = {
 
 type TileId = number
 
-type TilemapInfo = {
+type TilemapData = {
   tileId: number
   label: string
 }
 
-type LayerTile = TilemapInfo & {
-  tileKey: string,
+type LayerTile = TilemapData & {
+  tileListKey: string,
   pos: Pos,
   impassable?: boolean
   shouldStopBefore?: boolean

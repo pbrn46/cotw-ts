@@ -29,11 +29,11 @@ export function getTilemapPosById(id: number): Pos {
 }
 
 // Helper function for Typescript to create keys properly
-const createTilemapInfoByKey = <T extends Record<keyof T, TilemapInfo>>(obj: T): Record<keyof T, TilemapInfo> => {
+const createTilemapDataByKey = <T extends Record<keyof T, TilemapData>>(obj: T): Record<keyof T, TilemapData> => {
   return obj
 }
 // Map keys to tileId
-const tilemapInfoByKey = createTilemapInfoByKey({
+const tilemapDataByKey = createTilemapDataByKey({
   "CASTLE": { tileId: 1, label: "Castle" },
   "DOOR_CLOSED": { tileId: 2, label: "Door, Closed" },
   "DOOR_OPENED": { tileId: 3, label: "Door, Opened" },
@@ -62,26 +62,26 @@ const tilemapInfoByKey = createTilemapInfoByKey({
   "DUNGEON_WALL": { tileId: 295, label: "Dungeon Wall" },
 })
 
-export type TilemapKeys = keyof typeof tilemapInfoByKey
+export type TilemapKeys = keyof typeof tilemapDataByKey
 
-const tilemapInfoById = Object.keys(tilemapInfoByKey)
-  .reduce<Record<number, TilemapInfo>>((acc, key) => {
-    acc[tilemapInfoByKey[key as TilemapKeys].tileId] = tilemapInfoByKey[key as TilemapKeys]
+const tilemapDataById = Object.keys(tilemapDataByKey)
+  .reduce<Record<number, TilemapData>>((acc, key) => {
+    acc[tilemapDataByKey[key as TilemapKeys].tileId] = tilemapDataByKey[key as TilemapKeys]
     return acc
   }, {})
 
-export function getTilemapInfoByKey(key: TilemapKeys): TilemapInfo {
-  const tile = tilemapInfoByKey[key]
+export function getTilemapDataByKey(key: TilemapKeys): TilemapData {
+  const tile = tilemapDataByKey[key]
   if (!tile) throw new Error("Invalid tile key")
   return tile
 }
 
-export function getTilemapInfoById(tileId: number): TilemapInfo {
-  const tile = tilemapInfoById[tileId]
+export function getTilemapDataById(tileId: number): TilemapData {
+  const tile = tilemapDataById[tileId]
   if (!tile) throw new Error(`Invalid tile id ${tileId}`)
   return tile
 }
 
 export function getTileIdByKey(key: TilemapKeys): number {
-  return getTilemapInfoByKey(key).tileId
+  return getTilemapDataByKey(key).tileId
 }
