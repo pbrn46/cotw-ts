@@ -6,6 +6,7 @@ import { batch } from 'react-redux'
 import { addMessage } from './messages'
 import { addItemToPack } from './inventory'
 
+
 type HeroState = {
   pos: Pos,
   stats: SpriteStats,

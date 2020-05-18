@@ -1,0 +1,10 @@
+div.InventoryBags-Wrapper {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+div.InventoryBags-Wrapper > * {
+  flex-grow: 1;
+}

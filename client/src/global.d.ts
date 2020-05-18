@@ -33,7 +33,7 @@ type TerrainLayerTile = LayerTile & {
 }
 
 type ItemLayerTile = LayerTile & {
-  itemData?: InventoryItemData
+  itemData: InventoryItemData
 }
 
 type Layers = {
