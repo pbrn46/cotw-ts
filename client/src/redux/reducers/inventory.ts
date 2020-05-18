@@ -2,7 +2,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { makeItemByKey } from '../../lib/items'
 
 
-type EquippedItem = InventoryItemData | null
+type EquippedItem = InventoryItem | null
 
 
 type InventoryState = Record<EquippableType, EquippedItem>
@@ -25,7 +25,12 @@ const initialState: InventoryState = {
   leftRing: null,
   belt: null,
   boots: null,
-  pack: makeItemByKey("PACK_SMALL"),
+  pack: makeItemByKey("PACK_SMALL", {
+    contents: [
+      makeItemByKey("POTION1"),
+      makeItemByKey("BAG_SMALL"),
+    ]
+  }),
   purse: null,
 }
 const slice = createSlice({
@@ -35,7 +40,7 @@ const slice = createSlice({
     setInventory: (state, action: PayloadAction<InventoryState>) => {
       return action.payload
     },
-    addItemToPack: (state, action: PayloadAction<InventoryItemData>) => {
+    addItemToPack: (state, action: PayloadAction<InventoryItem>) => {
       state.pack?.contents?.push(action.payload)
     }
   },

@@ -2,7 +2,7 @@ import { getTileIdByKey } from "./tilemap"
 import { uniqueKey } from "./mapUtil"
 
 
-type ItemData = Omit<InventoryItemData, "itemListKey">
+type ItemData = Omit<InventoryItem, "itemListKey">
 
 const createItemDataByKey = <T extends Record<keyof T, ItemData>>(obj: T): T => {
   return obj
@@ -60,8 +60,8 @@ export function getItemDataByKey(key: ItemKeys): ItemData {
   return item
 }
 
-export function makeItemByKey(key: ItemKeys, otherProps?: Partial<Omit<InventoryItemData, "itemlistKey">>): InventoryItemData {
-  const item: InventoryItemData = {
+export function makeItemByKey(key: ItemKeys, otherProps?: Partial<Omit<InventoryItem, "itemlistKey">>): InventoryItem {
+  const item: InventoryItem = {
     ...getItemDataByKey(key),
     itemListKey: uniqueKey(),
     ...otherProps,

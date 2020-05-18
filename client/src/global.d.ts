@@ -33,7 +33,7 @@ type TerrainLayerTile = LayerTile & {
 }
 
 type ItemLayerTile = LayerTile & {
-  itemData: InventoryItemData
+  itemData: InventoryItem
 }
 
 type Layers = {
@@ -83,7 +83,7 @@ type EquippableType =
 type ItemType = Exclude<EquippableType, "rightRing" | "leftRing" | "freeHand">
   | "potion" | "scroll" | "ring" | "wand" | "container"
 
-type InventoryItemData = {
+type InventoryItem = {
   tileId: TileId,
   itemListKey: string,
   weight: number,
@@ -94,5 +94,5 @@ type InventoryItemData = {
   charges?: number,
   isJunk?: boolean,
   itemType: ItemType,
-  contents?: InventoryItemData[]
+  contents?: InventoryItem[]
 }

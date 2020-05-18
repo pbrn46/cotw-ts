@@ -3,7 +3,7 @@ import { Grid, Container } from '@material-ui/core'
 
 import InventoryEquipped from '../../InventoryEquipped'
 import { useKeyHandler } from '../../../lib/keyHandler'
-import InventoryBags from '../../InventoryBags'
+import InventoryContainers from '../../InventoryContainers'
 
 
 export default function Inventory() {
@@ -15,7 +15,7 @@ export default function Inventory() {
         <InventoryEquipped />
       </Grid>
       <Grid item xs={4} sm={5} md={6} lg={7} xl={8}>
-        <InventoryBags />
+        <InventoryContainers />
       </Grid>
     </Grid>
   </Container>
