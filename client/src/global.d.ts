@@ -14,9 +14,13 @@ type Pos = {
 
 type TileId = number
 
-type LayerTile = {
+type TilemapInfo = {
+  tileId: number
+  label: string
+}
+
+type LayerTile = TilemapInfo & {
   tileKey: string,
-  tileId: TileId,
   pos: Pos,
   impassable?: boolean
   shouldStopBefore?: boolean
@@ -29,7 +33,7 @@ type TerrainLayerTile = LayerTile & {
 }
 
 type ItemLayerTile = LayerTile & {
-  itemProps?: InventoryItem
+  itemData?: InventoryItemData
 }
 
 type Layers = {
@@ -76,18 +80,19 @@ type EquippableType =
   | "belt" | "boots"
   | "pack" | "purse"
 
-type ItemType = Omit<EquippableType, "rightRing" | "leftRing" | "freeHand">
+type ItemType = Exclude<EquippableType, "rightRing" | "leftRing" | "freeHand">
   | "potion" | "scroll" | "ring" | "wand" | "container"
 
-type InventoryItem = {
+type InventoryItemData = {
   tileId: TileId,
-  itemKey: string,
+  itemListKey: string,
   weight: number,
   bulk: number,
   sellValue: number,
   buyValue: number,
-  itemType: ItemType,
-  contents?: InventoryItem[]
+  label: string,
   charges?: number,
   isJunk?: boolean,
+  itemType: ItemType,
+  contents?: InventoryItemData[]
 }

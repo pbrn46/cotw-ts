@@ -1,5 +1,5 @@
 import { tilePosToPx } from "./mapUtil"
-import { getTilemapPosById, useTilemap } from "../assets/tilemap"
+import { getTilemapPosById, useTilemap } from "./tilemap"
 import { useCallback, useMemo } from "react"
 import { useSelector } from "../redux/store"
 

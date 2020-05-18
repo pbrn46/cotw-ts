@@ -4,7 +4,7 @@ import { tilePxSizeSelector } from './config'
 import { home } from '../../maps'
 import { getSurroundingPoses, getBlankMapState, make2dArray, tilesAtPos, inBounds, Size, forXY, isSamePos, makeTile } from '../../lib/mapUtil'
 import { AppThunk } from '../store'
-import { getTilemapInfoByKey } from '../../assets/tilemap'
+import { getTilemapInfoByKey } from '../../lib/tilemap'
 
 
 const initialState: MapState = getBlankMapState(Size(1, 1))

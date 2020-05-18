@@ -12,8 +12,9 @@ export default function InventoryBags() {
     </Grid>
     <Grid item>
       <Typography>Bag Items</Typography>
-      {bagItems && bagItems.map(bagItem => <span key={bagItem.itemKey}>
+      {bagItems && bagItems.map(bagItem => <span key={bagItem.itemListKey}>
         <CanvasTileSingle tileId={bagItem.tileId} />
+        {bagItem.label}
       </span>)}
     </Grid>
   </Grid>

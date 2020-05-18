@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
+import { TilemapKeys, getTilemapInfoByKey, getTilemapInfoById } from './tilemap'
+import { ItemKeys, getItemByKey } from './items'
 
 
 export function Pos(x: number, y: number): Pos {
@@ -125,8 +127,20 @@ export function isStopOnTop(pos: Pos, currentMap: MapState): boolean {
   return false
 }
 
-export function makeTile<T extends LayerTile>(tileId: number, pos: Pos, otherProps?: Omit<T, "tileId" | "pos" | "tileKey">): T {
-  return { tileId, pos, tileKey: uniqueKey(), ...otherProps } as T
+export function makeTile<T extends LayerTile>(tileId: number, pos: Pos, otherProps?: Partial<Omit<T, "tileId" | "pos" | "tileKey">>): T {
+  const tile = getTilemapInfoById(tileId)
+  return { ...tile, pos, tileKey: uniqueKey(), ...otherProps } as T
+}
+
+export function makeTileByKey<T extends LayerTile>(tilemapKey: TilemapKeys, pos: Pos, otherProps?: Partial<Omit<T, "tileId" | "pos" | "tileKey">>): T {
+  const tile = getTilemapInfoByKey(tilemapKey)
+  return { ...tile, pos, tileKey: uniqueKey(), ...otherProps } as T
+}
+
+export function makeItemTileByKey<T extends ItemLayerTile>(itemKey: ItemKeys, pos: Pos, otherProps?: Partial<Omit<T, "tileId" | "pos" | "tileKey">>): T {
+  const item = getItemByKey(itemKey)
+  const tile = getTilemapInfoById(item.tileId)
+  return { ...tile, pos, tileKey: uniqueKey(), itemData: item, ...otherProps } as T
 }
 
 export function getSurroundingPoses(pos: Pos, includeSelf: boolean, includeDiagonals: boolean = true): Pos[] {
@@ -202,16 +216,14 @@ export function inBounds(pos: Pos, size: Size): boolean {
 }
 
 /** Fill empty positions with tile, and returns new layer array */
-export function fillRemaining(size: Size, layer: LayerTile[][][], tile: Omit<LayerTile, "pos" | "tileKey">) {
+export function fillRemaining<T extends LayerTile>(size: Size, layer: T[][][], tile: T) {
   // const touched = make2dArray(size, false)
   const newLayer = _.cloneDeep(layer)
   forXY(size, (x, y) => {
     if (layer[x][y].length === 0) {
-      newLayer[x][y].push({
-        ...tile,
-        pos: Pos(x, y),
-        tileKey: uniqueKey()
-      })
+      newLayer[x][y].push(
+        { ...tile, pos: Pos(x, y) }
+      )
     }
   })
   return newLayer

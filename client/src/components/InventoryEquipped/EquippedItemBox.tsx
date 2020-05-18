@@ -13,7 +13,7 @@ export default function EquippedItemBox({ label, type }: EquippedItemBoxProps) {
     {itemInSlot ? (
       <span>
         <CanvasTileSingle tileId={itemInSlot.tileId} />
-        <br /> {label}
+        <br /> {itemInSlot.label}
       </span>
     ) : label}
   </td>

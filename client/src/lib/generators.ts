@@ -1,6 +1,7 @@
-import { makeTile, Pos, tilesToLayer, Size, uniqueKey, isSamePos, make2dArray, randomSize, randomPos, getSurroundingPosesArray, getSurroundingPoses, inBounds, getDirection, incrementPosByDirection, getPosesFromSize, getTilesAt, isPassable, getBlankMapState, mergeTilesToLayer, fillRemaining } from "./mapUtil"
-import { getTilemapInfoByKey } from "../assets/tilemap"
+import { makeTile, Pos, tilesToLayer, Size, uniqueKey, isSamePos, make2dArray, randomSize, randomPos, getSurroundingPosesArray, getSurroundingPoses, inBounds, getDirection, incrementPosByDirection, getPosesFromSize, getTilesAt, isPassable, getBlankMapState, mergeTilesToLayer, fillRemaining, makeTileByKey, makeItemTileByKey } from "./mapUtil"
+import { getTilemapInfoByKey  } from "./tilemap"
 import _ from "lodash"
+
 
 /** Generate array of tiles to fill a rectangle */
 export function genRect<T extends LayerTile>(pos: Pos, size: Size, tileData: Omit<T, "pos">): T[] {
@@ -98,7 +99,12 @@ export function genCastle(mapSize: Size, pos: Pos, castleSize: Size, gateSide?: 
   const terrain = genRect<TerrainLayerTile>(
     Pos(pos.x + 1, pos.y + 1),
     Size(castleSize.width - 2, castleSize.height - 2),
-    { tileId: 294, isLit: true, isRoom: true, tileKey: uniqueKey(), })
+    {
+      ...getTilemapInfoByKey("DUNGEON_FLOOR_LIT"),
+      isLit: true,
+      isRoom: true,
+      tileKey: uniqueKey(),
+    })
 
   return {
     structure: tilesToLayer(mapSize, structureTiles),
@@ -164,9 +170,6 @@ export function genDungeonPaths(mapSize: Size, dungeonRooms: TerrainLayerTile[][
     // const targetRoom = dungeonRooms[targetRoomIndex]
     // const targetPos = targetRoom[Math.floor(Math.random() * targetRoom.length)].pos
 
-    const floorTile = getTilemapInfoByKey("DUNGEON_FLOOR")
-    const doorClosedTile = getTilemapInfoByKey("DOOR_CLOSED")
-
     const roomStartPos = getSurroundingPoses(startPos, false)
       .find(pos => inBounds(pos, mapSize) && terrainTouched[pos.x][pos.y])
     const startDirection = roomStartPos ? getDirection(roomStartPos, startPos) : "none"
@@ -174,8 +177,8 @@ export function genDungeonPaths(mapSize: Size, dungeonRooms: TerrainLayerTile[][
     let newPath: TerrainLayerTile[] = []
     const doorChance = 0.5
     const doorOrFloorTile = Math.random() < doorChance
-      ? { tileId: doorClosedTile.tileId, pos: startPos, shouldStopOnTop: true, shouldStopBefore: true, tileKey: uniqueKey() }
-      : { tileId: floorTile.tileId, pos: startPos, shouldStopOnTop: true, tileKey: uniqueKey() }
+      ? makeTileByKey("DOOR_CLOSED", startPos, { shouldStopOnTop: true, shouldStopBefore: true, })
+      : makeTileByKey("DUNGEON_FLOOR", startPos, { shouldStopOnTop: true })
     newPath.push(doorOrFloorTile)
     let curPos = incrementPosByDirection(startPos, startDirection)
     let brokenByPath = false
@@ -185,7 +188,7 @@ export function genDungeonPaths(mapSize: Size, dungeonRooms: TerrainLayerTile[][
       && !terrainTouched[curPos.x][curPos.y]
       && !pathTouched[curPos.x][curPos.y]
     ) {
-      newPath.push(makeTile(floorTile.tileId, curPos))
+      newPath.push(makeTileByKey("DUNGEON_FLOOR", curPos))
       newPathTouched[curPos.x][curPos.y] = true
 
       const surroundingPoses = getSurroundingPoses(curPos, false, false)
@@ -252,8 +255,6 @@ export function genStairsDown(map: MapState, stairsCount: number): LayerTile[] {
 export function genItems(map: MapState, itemsCount: number): ItemLayerTile[] {
   const items: ItemLayerTile[] = []
 
-  const bagTile = getTilemapInfoByKey("BAG")
-
   const poses = getPosesFromSize(map.size)
   const floorTile = getTilemapInfoByKey("DUNGEON_FLOOR")
   const floorLitTile = getTilemapInfoByKey("DUNGEON_FLOOR_LIT")
@@ -267,20 +268,11 @@ export function genItems(map: MapState, itemsCount: number): ItemLayerTile[] {
       && itemsTiles.length === 0
       && (terrainTiles[0].tileId === floorTile.tileId
         || terrainTiles[0].tileId === floorLitTile.tileId)) {
-      items.push(makeTile(
-        bagTile.tileId,
+      items.push(makeItemTileByKey(
+        "BAG_SMALL",
         pos,
         {
           shouldStopOnTop: true,
-          itemProps: {
-            tileId: bagTile.tileId,
-            itemKey: uniqueKey(),
-            weight: 50,
-            bulk: 50,
-            sellValue: 50,
-            buyValue: 100,
-            itemType: "container",
-          },
         }
       ))
       itemsMade++
@@ -310,10 +302,7 @@ export function genDungeonMap(mapSize: Size, roomCount: number): MapState {
   newMap.layers.terrain = fillRemaining(
     mapSize,
     newMap.layers.terrain,
-    {
-      tileId: getTilemapInfoByKey("DUNGEON_WALL").tileId,
-      impassable: true,
-    }
+    makeTileByKey("DUNGEON_WALL", Pos(-1, -1), { impassable: true })
   )
   return newMap
 }

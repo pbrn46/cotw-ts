@@ -95,8 +95,8 @@ export const pickupItem = (): AppThunk => (dispatch, getState) => {
     return
   }
   for (let item of items) {
-    if (!item.itemProps) continue
-    state.inventory.pack.contents.push(item.itemProps)
+    if (!item.itemData) continue
+    state.inventory.pack.contents.push(item.itemData)
     dispatch(removeItem(item))
   }
 }
