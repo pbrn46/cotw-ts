@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
 import { TilemapKeys, getTilemapDataByKey, getTilemapDataById } from './tilemap'
-import { ItemKeys, getItemByKey } from './items'
+import { ItemKeys, makeItemByKey } from './items'
 
 
 export function Pos(x: number, y: number): Pos {
@@ -127,20 +127,33 @@ export function isStopOnTop(pos: Pos, currentMap: MapState): boolean {
   return false
 }
 
-export function makeTile<T extends LayerTile>(tileId: number, pos: Pos, otherProps?: Partial<Omit<T, "tileId" | "pos" | "tileKey">>): T {
-  const tile = getTilemapDataById(tileId)
-  return { ...tile, pos, tileListKey: uniqueKey(), ...otherProps } as T
+export function makeTile<T extends LayerTile>
+  (tileId: number, pos: Pos,
+    otherProps?: Partial<Omit<T, "tileId" | "pos" | "tileListKey">>): T {
+  return {
+    ...getTilemapDataById(tileId),
+    pos, tileListKey: uniqueKey(), ...otherProps
+  } as T
 }
 
-export function makeTileByKey<T extends LayerTile>(tilemapKey: TilemapKeys, pos: Pos, otherProps?: Partial<Omit<T, "tileId" | "pos" | "tileKey">>): T {
-  const tile = getTilemapDataByKey(tilemapKey)
-  return { ...tile, pos, tileListKey: uniqueKey(), ...otherProps } as T
+export function makeTileByKey<T extends LayerTile>
+  (tilemapKey: TilemapKeys, pos: Pos,
+    otherProps?: Partial<Omit<T, "tileId" | "pos" | "tileListKey">>): T {
+  return {
+    ...getTilemapDataByKey(tilemapKey),
+    pos, tileListKey: uniqueKey(), ...otherProps
+  } as T
 }
 
-export function makeItemTileByKey<T extends ItemLayerTile>(itemKey: ItemKeys, pos: Pos, otherProps?: Partial<Omit<T, "tileId" | "pos" | "tileKey">>): T {
-  const item = getItemByKey(itemKey)
-  const tile = getTilemapDataById(item.tileId)
-  return { ...tile, pos, tileListKey: uniqueKey(), itemData: item, ...otherProps } as T
+export function makeItemTileByKey
+  (itemKey: ItemKeys, pos: Pos,
+    otherProps?: Partial<Omit<ItemLayerTile, "tileId" | "pos" | "tileListKey">>): ItemLayerTile {
+  const item = makeItemByKey(itemKey)
+  return {
+    ...getTilemapDataById(item.tileId),
+    pos, tileListKey: uniqueKey(), itemData: item,
+    shouldStopOnTop: true, ...otherProps
+  }
 }
 
 export function getSurroundingPoses(pos: Pos, includeSelf: boolean, includeDiagonals: boolean = true): Pos[] {

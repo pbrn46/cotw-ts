@@ -16,7 +16,11 @@ const initialState: InventoryState = {
   bracers: null,
   gauntlets: null,
   weapon: null,
-  freeHand: null,
+  freeHand: makeItemByKey("CHEST_SMALL", {
+    contents: [
+      makeItemByKey("BAG_SMALL")
+    ]
+  }),
   rightRing: null,
   leftRing: null,
   belt: null,
@@ -31,9 +35,12 @@ const slice = createSlice({
     setInventory: (state, action: PayloadAction<InventoryState>) => {
       return action.payload
     },
+    addItemToPack: (state, action: PayloadAction<InventoryItemData>) => {
+      state.pack?.contents?.push(action.payload)
+    }
   },
 })
 
-export const { setInventory } = slice.actions
+export const { setInventory, addItemToPack } = slice.actions
 
 export default slice.reducer
