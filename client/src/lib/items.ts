@@ -16,6 +16,7 @@ export const itemDataByKey = createItemDataByKey({
     sellValue: 25,
     buyValue: 100,
     label: "Small Bag",
+    contents: [],
     itemType: "container",
   },
   "PACK_SMALL": {
