@@ -1,10 +1,12 @@
 div.InventoryBags-Wrapper {
   display: flex;
+  min-height: 0;
   height: 100%;
   flex-direction: column;
   align-items: stretch;
 }
 
-div.InventoryBags-Wrapper > * {
-  flex-grow: 1;
+div.InventoryBags-Wrapper > div.InventoryBags-Child {
+  flex: 1;
+  min-height: 0;
 }

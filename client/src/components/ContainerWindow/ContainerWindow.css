@@ -1,0 +1,32 @@
+div.ContainerWindow {
+  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+div.ContainerWindow-Title {
+  color: #fff;
+  background-color: #000080;
+  padding: 2px;
+  flex-shrink: 1;
+}
+
+div.ContainerWindow-Items {
+  height: 100%;
+  overflow-y: scroll;
+  flex-grow: 1;
+}
+
+div.ContainerWindow-Item {
+  padding: 5px;
+  display: inline-block;
+  width: 90px;
+  height: 110px;
+  text-align: center;
+  border: 1px solid #fff;
+}
+
+div.ContainerWindow-Item:hover {
+  border: 1px dashed #c0c0c0;
+}

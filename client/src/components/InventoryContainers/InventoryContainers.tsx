@@ -2,7 +2,7 @@ import React from 'react'
 import { useSelector } from '../../redux/store'
 import './InventoryContainers.css'
 import { getTilesAt, inBounds } from '../../lib/mapUtil'
-import ContainerWindow from './ContainerWindow'
+import ContainerWindow from '../ContainerWindow'
 
 
 export default function InventoryBags() {
@@ -14,9 +14,13 @@ export default function InventoryBags() {
       : [])
   const floorItems = floorItemTiles.map(itemTile => itemTile.itemData)
   return <div className="InventoryBags-Wrapper">
-    <ContainerWindow label={"Floor"} items={floorItems} />
+    <div className="InventoryBags-Child">
+      <ContainerWindow label={"Floor"} items={floorItems} />
+    </div>
     {pack && pack.contents && (
-      <ContainerWindow label={"Pack"} items={pack.contents} />
+      <div className="InventoryBags-Child">
+        <ContainerWindow label={"Pack"} items={pack.contents} />
+      </div>
     )}
   </div>
 }
