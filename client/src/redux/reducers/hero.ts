@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { AppThunk } from '../store'
 import { isPassable, getRandomPassablePos, inBounds, incrementPosByDirection, Pos, isStopOnTop, isStopBefore, getTilesAt } from '../../lib/mapUtil'
-import { discoverSurroundings, openDoorAtPos, removeItem } from './currentMap'
+import { discoverSurroundings, openDoorAtPos, removeItemAtPos } from './currentMap'
 import { batch } from 'react-redux'
 import { addMessage } from './messages'
 import { addItemToPack } from './inventory'
@@ -104,6 +104,6 @@ export const pickupItem = (): AppThunk => (dispatch, getState) => {
     if (!itemTile.itemData) continue
     dispatch(addItemToPack(itemTile.itemData))
     dispatch(addMessage({ message: itemTile.itemData.label, severity: "normal" }))
-    dispatch(removeItem(itemTile))
+    dispatch(removeItemAtPos({ pos: itemTile.pos, item: itemTile.itemData }))
   }
 }

@@ -145,15 +145,24 @@ export function makeTileByKey<T extends LayerTile>
   } as T
 }
 
+export function makeItemTile(pos: Pos,
+  itemData: InventoryItem,
+  otherProps?: Partial<Omit<ItemLayerTile, "tileId" | "pos" | "tileListKey">>): ItemLayerTile {
+  return {
+    tileId: itemData.tileId,
+    label: itemData.label,
+    pos,
+    tileListKey: uniqueKey(),
+    itemData,
+    shouldStopOnTop: true, ...otherProps
+  }
+}
+
 export function makeItemTileByKey
   (itemKey: ItemKeys, pos: Pos,
     otherProps?: Partial<Omit<ItemLayerTile, "tileId" | "pos" | "tileListKey">>): ItemLayerTile {
   const item = makeItemByKey(itemKey)
-  return {
-    ...getTilemapDataById(item.tileId),
-    pos, tileListKey: uniqueKey(), itemData: item,
-    shouldStopOnTop: true, ...otherProps
-  }
+  return makeItemTile(pos, item, otherProps)
 }
 
 export function getSurroundingPoses(pos: Pos, includeSelf: boolean, includeDiagonals: boolean = true): Pos[] {

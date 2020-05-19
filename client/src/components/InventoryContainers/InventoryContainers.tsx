@@ -15,11 +15,11 @@ export default function InventoryBags() {
   const floorItems = floorItemTiles.map(itemTile => itemTile.itemData)
   return <div className="InventoryBags-Wrapper">
     <div className="InventoryBags-Child">
-      <ContainerWindow label={"Floor"} items={floorItems} />
+      <ContainerWindow label={"Floor"} items={floorItems} isFloor />
     </div>
     {pack && pack.contents && (
       <div className="InventoryBags-Child">
-        <ContainerWindow label={"Pack"} items={pack.contents} />
+        <ContainerWindow label={"Pack"} container={pack} items={pack.contents} />
       </div>
     )}
   </div>

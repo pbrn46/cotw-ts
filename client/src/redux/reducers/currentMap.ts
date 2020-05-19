@@ -2,7 +2,7 @@ import { PayloadAction, createSlice, createSelector } from '@reduxjs/toolkit'
 import { RootState } from './reducers'
 import { tilePxSizeSelector } from './config'
 import { home } from '../../maps'
-import { getSurroundingPoses, getBlankMapState, make2dArray, tilesAtPos, inBounds, Size, forXY, isSamePos, makeTile } from '../../lib/mapUtil'
+import { getSurroundingPoses, getBlankMapState, make2dArray, tilesAtPos, inBounds, Size, makeTile, makeItemTile } from '../../lib/mapUtil'
 import { AppThunk } from '../store'
 import { getTilemapDataByKey } from '../../lib/tilemap'
 
@@ -42,18 +42,22 @@ const slice = createSlice({
         })
       }
     },
-    removeItem: (state, action: PayloadAction<ItemLayerTile>) => {
-      forXY(state.size, (x, y) => {
-        const index = state.layers.items[x][y].findIndex(item => isSamePos(item.pos, action.payload.pos))
-        if (index >= 0) {
-          state.layers.items[x][y].splice(index, 1)
-        }
-      })
+    removeItemAtPos: (state, action: PayloadAction<{ pos: Pos, item: InventoryItem }>) => {
+      const { x, y } = action.payload.pos
+      const index = state.layers.items[x][y].findIndex(itemTile =>
+        itemTile.itemData.itemListKey === action.payload.item.itemListKey)
+      if (index >= 0) {
+        state.layers.items[x][y].splice(index, 1)
+      }
+    },
+    addItemAtPos: (state, action: PayloadAction<{ pos: Pos, item: InventoryItem }>) => {
+      const { pos: { x, y }, item } = action.payload
+      state.layers.items[x][y].push(makeItemTile(action.payload.pos, item))
     }
   },
 })
 
-export const { setCurrentMap, setDiscovered, discoverAtPos, openDoorAtPos, removeItem } = slice.actions
+export const { setCurrentMap, setDiscovered, discoverAtPos, openDoorAtPos, removeItemAtPos, addItemAtPos } = slice.actions
 
 export default slice.reducer
 

@@ -96,3 +96,12 @@ type InventoryItem = {
   itemType: ItemType,
   contents?: InventoryItem[]
 }
+
+type DragDropItemContainerType = "container" | "floor" | "equipment"
+
+type DragDropInventoryItem = {
+  source: DragDropItemContainerType
+  itemData: InventoryItem
+}
+
+type InventoryItemDragStartHandler = (e: React.DragEvent, item: InventoryItem) => void
