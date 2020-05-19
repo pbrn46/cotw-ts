@@ -17,14 +17,15 @@ export function useInventoryDragDropHandlers(
       source: containerType,
       itemData: item
     }
-    e.dataTransfer.setData('inventoryItem', JSON.stringify(dragDropInventoryItem))
+    e.dataTransfer.setData('text/inventoryitem', JSON.stringify(dragDropInventoryItem))
   }, [containerType])
 
   const dropHandler = useCallback((e: React.DragEvent) => {
-    e.dataTransfer.types.includes("inventoryItem")
+    if (!e.dataTransfer.types.includes("text/inventoryitem")) return
     e.preventDefault()
     const dragDropInventoryItem: DragDropInventoryItem =
-      JSON.parse(e.dataTransfer.getData("inventoryItem"))
+      JSON.parse(e.dataTransfer.getData("text/inventoryitem"))
+
     // Remove from source
     switch (dragDropInventoryItem.source) {
       case "container":
@@ -50,11 +51,13 @@ export function useInventoryDragDropHandlers(
         }))
         break
     }
-    console.log("drop", dragDropInventoryItem)
+    // TODO: What if it's a container on the floor?
+
   }, [containerType, dispatch, heroPos, targetListKey])
 
   const dragOverHandler = useCallback((e: React.DragEvent) => {
-    e.dataTransfer.types.includes("inventoryItem")
+    if (!e.dataTransfer.types.includes("text/inventoryitem")) return
+    e.dataTransfer.dropEffect = "move"
     e.preventDefault()
   }, [])
 
