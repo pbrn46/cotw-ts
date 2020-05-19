@@ -7,7 +7,7 @@ type ContainerWindowItemProps = {
   onClick: (item: InventoryItem) => void
   selected?: boolean
 }
-export default function ContainerWindowItem({ item, onClick, selected }: ContainerWindowItemProps) {
+export default React.memo(function ContainerWindowItem({ item, onClick, selected }: ContainerWindowItemProps) {
   return <div
     className={`ContainerWindow-Item${selected ? " selected" : ""}`}
     onClick={e => onClick(item)}
@@ -19,4 +19,4 @@ export default function ContainerWindowItem({ item, onClick, selected }: Contain
       {item.label}
     </div>
   </div>
-}
+})
