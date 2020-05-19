@@ -31,7 +31,7 @@ export default React.memo(function CanvasLayer({ layer }: CanvasLayerProps) {
           } else {
             if (shroudMode === "alpha") {
               ctx.save()
-              ctx.globalAlpha = 0.3
+              ctx.globalAlpha = 0.15
               draw(layerTile.tileId, layerTile.pos)
               ctx.restore()
             }
