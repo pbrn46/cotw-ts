@@ -44,15 +44,18 @@ const slice = createSlice({
     },
     removeItemAtPos: (state, action: PayloadAction<{ pos: Pos, item: InventoryItem }>) => {
       const { x, y } = action.payload.pos
-      const index = state.layers.items[x][y][0].contents.findIndex(item =>
+      const index = state.layers.items[x][y][0]?.contents.findIndex(item =>
         item.itemListKey === action.payload.item.itemListKey)
       if (index >= 0) {
-        state.layers.items[x][y].splice(index, 1)
+        state.layers.items[x][y][0].contents.splice(index, 1)
+        if (state.layers.items[x][y][0].contents.length === 0) {
+          state.layers.items[x][y].shift()
+        }
       }
     },
     addItemAtPos: (state, action: PayloadAction<{ pos: Pos, item: InventoryItem }>) => {
       const { pos: { x, y }, item } = action.payload
-      if (state.layers.items[x][y][0]) {
+      if (state.layers.items[x][y].length > 0) {
         state.layers.items[x][y][0].contents.push(item)
       } else {
         state.layers.items[x][y].push(makeItemTile(action.payload.pos, item))

@@ -18,7 +18,7 @@ type ContainerPackWindowProps = {
 type ContainerWindowProps = ContainerFloorWindowProps | ContainerPackWindowProps
 export default function ContainerWindow({ items, container, isFloor = false }: ContainerWindowProps) {
   const [selectedItemListKey, setSelectedItemListKey] = useState<string | null>(null)
-  const handleItemClick = useCallback((item: InventoryItem) => {
+  const handleItemMouseDown = useCallback((item: InventoryItem) => {
     setSelectedItemListKey(item.itemListKey)
   }, [])
 
@@ -36,7 +36,7 @@ export default function ContainerWindow({ items, container, isFloor = false }: C
       {items.map(item =>
         <ContainerWindowItem
           item={item}
-          onClick={handleItemClick}
+          onMouseDown={handleItemMouseDown}
           key={item.itemListKey}
           selected={item.itemListKey === selectedItemListKey}
           onItemDragStart={dragStartHandler}

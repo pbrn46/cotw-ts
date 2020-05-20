@@ -15,7 +15,7 @@ export function useInventoryDragDropHandlers(
   const dragStartHandler: InventoryItemDragStartHandler = useCallback((e, item) => {
     const dragDropInventoryItem: DragDropInventoryItem = {
       source: containerType,
-      itemData: item
+      item: item
     }
     e.dataTransfer.setData('text/inventoryitem', JSON.stringify(dragDropInventoryItem))
   }, [containerType])
@@ -29,10 +29,10 @@ export function useInventoryDragDropHandlers(
     // Remove from source
     switch (dragDropInventoryItem.source) {
       case "container":
-        dispatch(removeItemFromContainerByListKey(dragDropInventoryItem.itemData.itemListKey))
+        dispatch(removeItemFromContainerByListKey(dragDropInventoryItem.item.itemListKey))
         break
       case "floor":
-        dispatch(removeItemAtPos({ pos: heroPos, item: dragDropInventoryItem.itemData }))
+        dispatch(removeItemAtPos({ pos: heroPos, item: dragDropInventoryItem.item }))
         break
     }
 
@@ -41,13 +41,13 @@ export function useInventoryDragDropHandlers(
       case "container":
         dispatch(addItemToContainerByListKey({
           containerListKey: targetListKey,
-          item: dragDropInventoryItem.itemData,
+          item: dragDropInventoryItem.item,
         }))
         break
       case "floor":
         dispatch(addItemAtPos({
           pos: heroPos,
-          item: dragDropInventoryItem.itemData,
+          item: dragDropInventoryItem.item,
         }))
         break
     }

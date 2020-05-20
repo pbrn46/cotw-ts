@@ -20,7 +20,7 @@ div.ContainerWindow-Items {
 }
 
 div.ContainerWindow-Item {
-  padding: 2px;
+  padding: 0px;
   display: inline-block;
   width: 80px;
   height: 80px;

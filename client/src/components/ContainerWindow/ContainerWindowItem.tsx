@@ -4,15 +4,15 @@ import CanvasTileSingle from '../CanvasTileSingle'
 
 type ContainerWindowItemProps = {
   item: InventoryItem
-  onClick: (item: InventoryItem) => void
+  onMouseDown: (item: InventoryItem) => void
   selected?: boolean
   onItemDragStart: InventoryItemDragStartHandler
 }
 export default React.memo(function ContainerWindowItem
-  ({ item, onClick, selected, onItemDragStart }: ContainerWindowItemProps) {
+  ({ item, onMouseDown, selected, onItemDragStart }: ContainerWindowItemProps) {
   return <div
     className={`ContainerWindow-Item${selected ? " selected" : ""}`}
-    onClick={e => onClick(item)}
+    onMouseDown={e => onMouseDown(item)}
     draggable
     onDragStart={e => onItemDragStart(e, item)}
     key={item.itemListKey}>

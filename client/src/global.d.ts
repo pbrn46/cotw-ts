@@ -42,7 +42,7 @@ type Layers = {
   terrain: TerrainLayerTile[][][]
   structure: LayerTile[][][]
   traps: LayerTile[][][]
-  items: ItemLayerTile[][][]
+  items: ItemLayerTile[][][] // We only use the first index for itemTiles. Items go into itemTile.contents
   sprites: LayerTile[][][]
   projectiles: LayerTile[][][]
 }
@@ -102,7 +102,7 @@ type DragDropItemContainerType = "container" | "floor" | "equipment"
 
 type DragDropInventoryItem = {
   source: DragDropItemContainerType
-  itemData: InventoryItem
+  item: InventoryItem
 }
 
 type InventoryItemDragStartHandler = (e: React.DragEvent, item: InventoryItem) => void
