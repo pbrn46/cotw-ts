@@ -1,6 +1,7 @@
 .WorldView {
   height: 100%;
   overflow: hidden;
+  background-color: #fff;
 }
 
 .WorldView-Inner {
