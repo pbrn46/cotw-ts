@@ -101,9 +101,11 @@ export const pickupItem = (): AppThunk => (dispatch, getState) => {
     return
   }
   for (let itemTile of itemTiles) {
-    if (!itemTile.itemData) continue
-    dispatch(addItemToPack(itemTile.itemData))
-    dispatch(addMessage({ message: itemTile.itemData.label, severity: "normal" }))
-    dispatch(removeItemAtPos({ pos: itemTile.pos, item: itemTile.itemData }))
+    if (!itemTile.contents) continue
+    for (let item of itemTile.contents) {
+      dispatch(addItemToPack(item))
+      dispatch(addMessage({ message: item.label, severity: "normal" }))
+      dispatch(removeItemAtPos({ pos: itemTile.pos, item }))
+    }
   }
 }

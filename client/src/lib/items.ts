@@ -13,6 +13,7 @@ const testItemProps: Omit<ItemData, "tileId" | "itemType" | "label"> = {
   bulk: 5,
   sellValue: 25,
   buyValue: 100,
+  contents: [],
 }
 export const itemDataByKey = createItemDataByKey({
   "BAG_SMALL": {

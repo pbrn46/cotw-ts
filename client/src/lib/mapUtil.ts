@@ -153,7 +153,7 @@ export function makeItemTile(pos: Pos,
     label: itemData.label,
     pos,
     tileListKey: uniqueKey(),
-    itemData,
+    contents: [itemData],
     shouldStopOnTop: true, ...otherProps
   }
 }

@@ -12,6 +12,10 @@ type Pos = {
   y: number,
 }
 
+type ItemContainer = {
+  contents: InventoryItem[]
+}
+
 type TileId = number
 
 type TilemapData = {
@@ -32,9 +36,7 @@ type TerrainLayerTile = LayerTile & {
   isRoom?: boolean
 }
 
-type ItemLayerTile = LayerTile & {
-  itemData: InventoryItem
-}
+type ItemLayerTile = LayerTile & ItemContainer
 
 type Layers = {
   terrain: TerrainLayerTile[][][]
@@ -83,7 +85,7 @@ type EquippableType =
 type ItemType = Exclude<EquippableType, "rightRing" | "leftRing" | "freeHand">
   | "potion" | "scroll" | "ring" | "wand" | "container"
 
-type InventoryItem = {
+type InventoryItem = ItemContainer & {
   tileId: TileId,
   itemListKey: string,
   weight: number,
@@ -94,7 +96,6 @@ type InventoryItem = {
   charges?: number,
   isJunk?: boolean,
   itemType: ItemType,
-  contents?: InventoryItem[]
 }
 
 type DragDropItemContainerType = "container" | "floor" | "equipment"

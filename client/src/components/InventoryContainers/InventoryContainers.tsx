@@ -12,7 +12,7 @@ export default function InventoryBags() {
     inBounds(heroPos, state.currentMap.size)
       ? getTilesAt(state.currentMap.layers.items, heroPos)
       : [])
-  const floorItems = floorItemTiles.map(itemTile => itemTile.itemData)
+  const floorItems = floorItemTiles.map(itemTile => itemTile.contents).flat(1)
   return <div className="InventoryBags-Wrapper">
     <div className="InventoryBags-Child">
       <ContainerWindow items={floorItems} isFloor />

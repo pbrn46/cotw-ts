@@ -36,7 +36,7 @@ terrainLayer = fillRemaining(mapSize, terrainLayer, makeTileByKey("GRASS", Pos(-
 const itemsTiles: ItemLayerTile[] = [
   makeTile<ItemLayerTile>(85, Pos(2, 3), {
     shouldStopOnTop: true,
-    itemData: makeItemByKey("BAG_SMALL"),
+    contents: [makeItemByKey("BAG_SMALL")],
   })
 ]
 let itemsLayer = tilesToLayer(mapSize, itemsTiles)
