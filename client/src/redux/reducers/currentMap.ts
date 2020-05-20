@@ -48,6 +48,7 @@ const slice = createSlice({
         item.itemListKey === action.payload.item.itemListKey)
       if (index >= 0) {
         state.layers.items[x][y][0].contents.splice(index, 1)
+        // Remove tile if no more contents
         if (state.layers.items[x][y][0].contents.length === 0) {
           state.layers.items[x][y].shift()
         }
