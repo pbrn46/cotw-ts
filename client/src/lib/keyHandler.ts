@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import { useDispatch } from "../redux/store"
 import { heroWalkByDirection, heroSprintByDirection, pickupItem } from "../redux/reducers/hero"
 import { useHistory } from "react-router-dom"
+import { debugTest1 } from "../redux/reducers/debug"
 
 
 type KeyHandlerScreen = "home" | "inventory"
@@ -52,6 +53,13 @@ const getHomeKeyHandlers: GetKeyHandlersFn = (dispatch, history) => {
       else dispatch(heroWalkByDirection("lowerRight"))
       return true
     },
+    "D": e => {
+      if (e.shiftKey) {
+        dispatch(debugTest1())
+        return true
+      }
+      return false
+    },
     "i": e => {
       history.replace('/inventory')
       return true
@@ -65,10 +73,17 @@ const getHomeKeyHandlers: GetKeyHandlersFn = (dispatch, history) => {
 
 const getInventoryKeyHandlers: GetKeyHandlersFn = (dispatch, history) => {
   return {
+    "D": e => {
+      if (e.shiftKey) {
+        dispatch(debugTest1())
+        return true
+      }
+      return false
+    },
     "Escape": e => {
       history.replace('/')
       return true
-    }
+    },
   }
 }
 
