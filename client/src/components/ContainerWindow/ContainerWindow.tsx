@@ -4,18 +4,19 @@ import ContainerWindowItem from './ContainerWindowItem'
 import { useInventoryDragDropHandlers } from '../../lib/inventoryDragDrop'
 
 
-type ContainerWindowProps = {
-  label: string
+type ContainerFloorWindowProps = {
   items: InventoryItem[]
   isFloor: true
-  container?: never
-} | {
-  label: string
+  container?: undefined
+}
+type ContainerPackWindowProps = {
   items: InventoryItem[]
   isFloor?: false
   container: InventoryItem
 }
-export default function ContainerWindow({ label, items, container, isFloor = false }: ContainerWindowProps) {
+
+type ContainerWindowProps = ContainerFloorWindowProps | ContainerPackWindowProps
+export default function ContainerWindow({ items, container, isFloor = false }: ContainerWindowProps) {
   const [selectedItemListKey, setSelectedItemListKey] = useState<string | null>(null)
   const handleItemClick = useCallback((item: InventoryItem) => {
     setSelectedItemListKey(item.itemListKey)
@@ -23,6 +24,8 @@ export default function ContainerWindow({ label, items, container, isFloor = fal
 
   const { dragStartHandler, dragOverHandler, dropHandler } =
     useInventoryDragDropHandlers(isFloor ? "floor" : "container", container?.itemListKey)
+
+  const label = isFloor ? "Floor" : container?.label ?? ""
 
   return <div className="ContainerWindow">
     <div className="ContainerWindow-Title">{label}</div>

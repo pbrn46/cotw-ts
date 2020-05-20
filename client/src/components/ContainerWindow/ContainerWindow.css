@@ -20,11 +20,12 @@ div.ContainerWindow-Items {
 }
 
 div.ContainerWindow-Item {
-  padding: 5px;
+  padding: 2px;
   display: inline-block;
-  width: 90px;
-  height: 90px;
+  width: 80px;
+  height: 80px;
   text-align: center;
+  font-size: 12px;
   border: 1px solid #fff;
 }
 
@@ -33,5 +34,5 @@ div.ContainerWindow-Item:hover {
 }
 
 div.ContainerWindow-Item.selected {
-  border: 1px dashed #800000;
+  border: 1px dashed #ff0000;
 }
