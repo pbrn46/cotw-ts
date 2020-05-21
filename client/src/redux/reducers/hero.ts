@@ -97,7 +97,7 @@ export const pickupItem = (): AppThunk => (dispatch, getState) => {
     dispatch(addMessage({ message: "You have no pack to store it in!", severity: "normal" }))
     return
   }
-  if (!state.inventory.pack.contents) {
+  if (!state.inventory.pack.contents) { // TODO: All items have contents at the moment. Use a better method to check that it's a container.
     dispatch(addMessage({ message: "Your pack can not store things!", severity: "normal" }))
     return
   }
