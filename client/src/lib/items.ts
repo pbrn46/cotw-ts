@@ -19,21 +19,18 @@ export const itemDataByKey = createItemDataByKey({
   "BAG_SMALL": {
     tileId: getTileIdByKey("BAG"),
     label: "Small Bag",
-    contents: [],
     itemType: "container",
     ...testItemProps,
   },
   "CHEST_SMALL": {
     tileId: getTileIdByKey("CHEST"),
     label: "Small Chest",
-    contents: [],
     itemType: "container",
     ...testItemProps,
   },
   "PACK_SMALL": {
     tileId: getTileIdByKey("PACK"),
     label: "Small Pack",
-    contents: [],
     itemType: "container",
     ...testItemProps,
   },

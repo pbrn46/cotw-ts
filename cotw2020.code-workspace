@@ -15,6 +15,7 @@
 		"jest.disabledWorkspaceFolders": [
 			"root",
 		],
-		"terminal.integrated.cwd": "${workspaceFolder:root}"
+		"terminal.integrated.cwd": "${workspaceFolder:root}",
+		"typescript.tsdk": "client\\node_modules\\typescript\\lib"
 	}
 }
