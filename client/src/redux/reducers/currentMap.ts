@@ -4,7 +4,7 @@ import { tilePxSizeSelector } from './config'
 import { home } from '../../maps'
 import { getSurroundingPoses, getBlankMapState, make2dArray, tilesAtPos, inBounds, Size, makeTile, makeItemTile } from '../../lib/mapUtil'
 import { AppThunk } from '../store'
-import { getTilemapDataByKey } from '../../lib/tilemap'
+import { getTilemapDataByKey, getTileIdByKey } from '../../lib/tilemap'
 
 
 const initialState: MapState = getBlankMapState(Size(1, 1))
@@ -51,6 +51,13 @@ const slice = createSlice({
         // Remove tile if no more contents
         if (state.layers.items[x][y][0].contents.length === 0) {
           state.layers.items[x][y].shift()
+        } else {
+          if (state.layers.items[x][y][0].contents.length > 1) {
+            state.layers.items[x][y][0].tileId = getTileIdByKey("ITEM_STASH")
+          } else {
+            state.layers.items[x][y][0].tileId =
+              state.layers.items[x][y][0].contents[0].tileId
+          }
         }
       }
     },
@@ -58,6 +65,12 @@ const slice = createSlice({
       const { pos: { x, y }, item } = action.payload
       if (state.layers.items[x][y].length > 0) {
         state.layers.items[x][y][0].contents.push(item)
+        if (state.layers.items[x][y][0].contents.length > 1) {
+          state.layers.items[x][y][0].tileId = getTileIdByKey("ITEM_STASH")
+        } else {
+          state.layers.items[x][y][0].tileId =
+            state.layers.items[x][y][0].contents[0].tileId
+        }
       } else {
         state.layers.items[x][y].push(makeItemTile(action.payload.pos, item))
       }
