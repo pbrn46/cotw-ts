@@ -78,6 +78,7 @@ export const heroSprintByDirection = (direction: Direction): AppThunk => (dispat
       if (isPassable(nextPos, state.currentMap)) {
         if (isStopBefore(nextPos, state.currentMap)) break
         dispatch(moveHero(nextPos))
+        dispatch(incrementHeroTime(2.3)) // Should probably multiply by distance
         if (isStopOnTop(nextPos, state.currentMap)) break
       }
       else break
