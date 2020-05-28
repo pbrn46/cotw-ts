@@ -90,14 +90,14 @@ export const pickupItem = (): AppThunk => (dispatch, getState) => {
   const state = getState()
   const itemTiles = getTilesAt(state.currentMap.layers.items, state.hero.pos)
   if (itemTiles.length === 0) {
-    dispatch(addMessage({ message: "The floor is empty.", severity: "normal" }))
+    dispatch(addMessage({ message: "The floor is empty. It's just you.", severity: "normal" }))
     return
   }
   if (!state.inventory.pack) {
     dispatch(addMessage({ message: "You have no pack to store it in!", severity: "normal" }))
     return
   }
-  if (!state.inventory.pack.contents) { // TODO: All items have contents at the moment. Use a better method to check that it's a container.
+  if (state.inventory.pack.itemType !== "container") {
     dispatch(addMessage({ message: "Your pack can not store things!", severity: "normal" }))
     return
   }
