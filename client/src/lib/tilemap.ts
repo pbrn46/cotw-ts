@@ -29,12 +29,12 @@ export function getTilemapPosById(id: number): Pos {
 }
 
 // Helper function for Typescript to create keys properly
-const createTilemapDataByKey =
-  <T extends R, R extends Record<keyof T, TilemapData>>(obj: T): R => obj
+type TilemapDataDefinition<T> = { [K in keyof T]: TilemapData }
+const asTileMapDataDefinition = <T extends any>(obj: TilemapDataDefinition<T>) => obj
 
 // Map keys to tileId
-const tilemapDataByKey = createTilemapDataByKey({
-  "CASTLE": { tileId: 1, label: "Castle" },
+const tilemapDataByKey = asTileMapDataDefinition({
+  "CASTLE": { tileId: 1, label: "Castle", },
   "DOOR_CLOSED": { tileId: 2, label: "Door, Closed" },
   "DOOR_OPENED": { tileId: 3, label: "Door, Opened" },
   "STAIRS_UP": { tileId: 4, label: "Stairs, Up" },
