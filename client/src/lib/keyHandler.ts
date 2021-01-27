@@ -1,8 +1,9 @@
 import { useEffect } from "react"
+import { useHistory } from "react-router-dom"
 import { useDispatch } from "../redux/store"
 import { heroWalkByDirection, heroSprintByDirection, pickupItem } from "../redux/reducers/hero"
-import { useHistory } from "react-router-dom"
 import { debugTest1 } from "../redux/reducers/debug"
+import { setPendingCommand } from "../redux/reducers/command"
 
 
 type KeyHandlerScreen = "home" | "inventory"
@@ -66,6 +67,10 @@ const getHomeKeyHandlers: GetKeyHandlersFn = (dispatch, history) => {
     },
     "g": e => {
       dispatch(pickupItem())
+      return true
+    },
+    "c": e => {
+      dispatch(setPendingCommand("closeDoor"))
       return true
     }
   }

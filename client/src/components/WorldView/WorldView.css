@@ -10,12 +10,6 @@
   overflow: auto;
 }
 
-.WorldView-Inner .WorldView-Absolute {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-
 .WorldView canvas {
   position: absolute;
   left: 0;

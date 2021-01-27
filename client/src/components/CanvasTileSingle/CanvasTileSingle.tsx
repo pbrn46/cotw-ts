@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react'
-import { useSelector } from '../../redux/store'
+import { useAppSelector } from '../../redux/store'
 import { useDrawTile } from '../../lib/drawUtil'
 import { Pos } from '../../lib/mapUtil'
 
@@ -9,7 +9,7 @@ type CanvasTileSingleProps = {
 }
 export default function CanvasTileSingle({ tileId }: CanvasTileSingleProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const tilePxSize = useSelector(state => state.config.tilePxSize)
+  const tilePxSize = useAppSelector(state => state.config.tilePxSize)
 
   const draw = useDrawTile(canvasRef.current)
 

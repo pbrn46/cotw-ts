@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react'
 import { Grid } from '@material-ui/core'
-import { useSelector } from '../../redux/store'
+import { useAppSelector } from '../../redux/store'
 import moment from 'moment'
 
 
 export default function Stats() {
-  const stats = useSelector(state => state.hero.stats)
+  const stats = useAppSelector(state => state.hero.stats)
 
   const duration = useMemo(() => {
     const d = moment.duration(stats.time, "seconds")

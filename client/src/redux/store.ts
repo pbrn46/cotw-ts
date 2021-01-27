@@ -1,5 +1,5 @@
 import { configureStore, ThunkAction, Action, getDefaultMiddleware, ThunkDispatch } from '@reduxjs/toolkit'
-import { useSelector as useReduxSelector, useDispatch as useReduxDispatch, TypedUseSelectorHook } from 'react-redux'
+import { useSelector, useDispatch as useReduxDispatch, TypedUseSelectorHook } from 'react-redux'
 import Reducers from './reducers'
 
 const custimezedMiddleware = getDefaultMiddleware({
@@ -16,7 +16,7 @@ export default store
 
 
 /** Typed useSelector */
-export const useSelector: TypedUseSelectorHook<RootState> = useReduxSelector
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
 
 /** Typed useDispatch */
 export type Dispatch = ThunkDispatch<RootState, void, Action>

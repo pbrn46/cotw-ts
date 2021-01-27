@@ -1,12 +1,12 @@
 import React, { useRef, useEffect } from 'react'
-import { useSelector } from '../../redux/store'
+import { useAppSelector } from '../../redux/store'
 import './Messages.css'
 
 
 export default function Messages() {
   const scrollableDivRef = useRef<HTMLDivElement | null>(null)
   const bottomDivRef = useRef<HTMLDivElement | null>(null)
-  const messages = useSelector(state => state.messages)
+  const messages = useAppSelector(state => state.messages)
 
   useEffect(() => {
     if (!scrollableDivRef.current || !bottomDivRef.current) return

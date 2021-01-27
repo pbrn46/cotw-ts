@@ -1,5 +1,5 @@
 import { useCallback } from "react"
-import { useDispatch, useSelector } from "../redux/store"
+import { useDispatch, useAppSelector } from "../redux/store"
 import { removeItemAtPos, addItemAtPos } from "../redux/reducers/currentMap"
 import { addItemToContainerByListKey, removeItemFromContainerByListKey } from "../redux/reducers/inventory"
 
@@ -10,7 +10,7 @@ export function useInventoryDragDropHandlers(
 ) {
   if (containerType === "container" && targetListKey === "") throw new Error("targetListKey required when source is a container")
   const dispatch = useDispatch()
-  const heroPos = useSelector(state => state.hero.pos)
+  const heroPos = useAppSelector(state => state.hero.pos)
 
   const dragStartHandler: InventoryItemDragStartHandler = useCallback((e, item) => {
     const dragDropInventoryItem: DragDropInventoryItem = {

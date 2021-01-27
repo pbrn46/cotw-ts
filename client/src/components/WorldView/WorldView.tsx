@@ -2,20 +2,20 @@ import React, { useRef, useMemo } from 'react'
 import './WorldView.css'
 import { useScrollWatcher } from '../../lib/scroll'
 import CanvasLayer from '../CanvasLayer'
-import { useSelector } from '../../redux/store'
+import { useAppSelector } from '../../redux/store'
 import { make2dArray, isSamePos, Pos, makeTileByKey } from '../../lib/mapUtil'
+import ClickLayer from '../ClickLayer'
 
 export default function WorldView() {
   const scrollRef = useRef<HTMLDivElement | null>(null)
-  const absoluteRef = useRef<HTMLDivElement | null>(null)
-  const terrainLayer = useSelector(state => state.currentMap.layers.terrain)
-  const structureLayer = useSelector(state => state.currentMap.layers.structure)
-  const itemsLayer = useSelector(state => state.currentMap.layers.items)
-  const spritesLayer = useSelector(state => state.currentMap.layers.sprites)
+  const terrainLayer = useAppSelector(state => state.currentMap.layers.terrain)
+  const structureLayer = useAppSelector(state => state.currentMap.layers.structure)
+  const itemsLayer = useAppSelector(state => state.currentMap.layers.items)
+  const spritesLayer = useAppSelector(state => state.currentMap.layers.sprites)
 
-  const heroPos = useSelector(state => state.hero.pos)
+  const heroPos = useAppSelector(state => state.hero.pos)
 
-  const mapSize = useSelector(state => state.currentMap.size)
+  const mapSize = useAppSelector(state => state.currentMap.size)
   const heroLayer = useMemo(() => {
     return make2dArray(mapSize, (x, y) => isSamePos(Pos(x, y), heroPos)
       ? [makeTileByKey("HERO_MALE", heroPos)]
@@ -23,18 +23,17 @@ export default function WorldView() {
     )
   }, [heroPos, mapSize])
 
-  useScrollWatcher(scrollRef, absoluteRef)
+  useScrollWatcher(scrollRef)
 
   return <div className="WorldView">
-    <div className="WorldView-Inner" ref={scrollRef}>
-      <div
-        className="WorldView-Absolute"
-        ref={absoluteRef} />
-      <CanvasLayer layer={terrainLayer} />
-      <CanvasLayer layer={structureLayer} />
-      <CanvasLayer layer={itemsLayer} />
-      <CanvasLayer layer={spritesLayer} />
-      <CanvasLayer layer={heroLayer} />
+    <div className="WorldView-Inner" ref={scrollRef} >
+      <ClickLayer>
+        <CanvasLayer layer={terrainLayer} />
+        <CanvasLayer layer={structureLayer} />
+        <CanvasLayer layer={itemsLayer} />
+        <CanvasLayer layer={spritesLayer} />
+        <CanvasLayer layer={heroLayer} />
+      </ClickLayer>
     </div>
   </div>
 }

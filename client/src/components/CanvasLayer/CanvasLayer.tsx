@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react'
-import { useSelector } from '../../redux/store'
+import { useAppSelector } from '../../redux/store'
 import { currentMapPxSizeSelector } from '../../redux/reducers/currentMap'
 import { useDrawTile } from '../../lib/drawUtil'
 import { getTilesAt, Pos } from '../../lib/mapUtil'
@@ -9,11 +9,11 @@ type CanvasLayerProps = {
   layer: LayerTile[][][]
 }
 export default React.memo(function CanvasLayer({ layer }: CanvasLayerProps) {
-  const mapSize = useSelector(state => state.currentMap.size)
-  const mapPxSize = useSelector(currentMapPxSizeSelector)
+  const mapSize = useAppSelector(state => state.currentMap.size)
+  const mapPxSize = useAppSelector(currentMapPxSizeSelector)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const discovered = useSelector(state => state.currentMap.discovered)
-  const shroudMode = useSelector(state => state.config.srhoudMode)
+  const discovered = useAppSelector(state => state.currentMap.discovered)
+  const shroudMode = useAppSelector(state => state.config.srhoudMode)
 
   const draw = useDrawTile(canvasRef.current)
 

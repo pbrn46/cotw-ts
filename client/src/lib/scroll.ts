@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react'
-import { useSelector } from '../redux/store'
+import { useAppSelector } from '../redux/store'
 import { Pos } from './mapUtil'
 
-export function useScrollWatcher(scrollRef: React.MutableRefObject<HTMLDivElement | null>, innerRef: React.MutableRefObject<HTMLDivElement | null>) {
-  const heroPos = useSelector(state => state.hero.pos)
-  const tileSize = useSelector(state => state.config.tilePxSize)
+export function useScrollWatcher(scrollRef: React.MutableRefObject<HTMLDivElement | null>) {
+  const heroPos = useAppSelector(state => state.hero.pos)
+  const tileSize = useAppSelector(state => state.config.tilePxSize)
 
   useEffect(() => {
-    if (!scrollRef.current || !innerRef.current) return
+    if (!scrollRef.current) return
     const heroPosPx = Pos(heroPos.x * tileSize.width, heroPos.y * tileSize.height)
     const scrollRect = scrollRef.current.getBoundingClientRect()
     const widthProxy = scrollRect.width * 0.15 // Distance from the side to trigger scroll
@@ -24,5 +24,5 @@ export function useScrollWatcher(scrollRef: React.MutableRefObject<HTMLDivElemen
     if (scrollRef.current.scrollTop - heightProxy + scrollRect.height - tileSize.height < heroPosPx.y) {
       scrollRef.current.scrollTop = heroPosPx.y - (scrollRect.height / 2)
     }
-  }, [innerRef, scrollRef, heroPos, tileSize.width, tileSize.height])
+  }, [scrollRef, heroPos, tileSize.width, tileSize.height])
 }

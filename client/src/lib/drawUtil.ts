@@ -1,7 +1,7 @@
 import { tilePosToPx } from "./mapUtil"
 import { getTilemapPosById, useTilemap } from "./tilemap"
 import { useCallback, useMemo } from "react"
-import { useSelector } from "../redux/store"
+import { useAppSelector } from "../redux/store"
 
 
 export function drawTile(
@@ -17,7 +17,7 @@ export function drawTile(
 
 export function useDrawTile(canvas: HTMLCanvasElement | null) {
   const tilemap = useTilemap()
-  const tilePxSize = useSelector(state => state.config.tilePxSize)
+  const tilePxSize = useAppSelector(state => state.config.tilePxSize)
 
   const ctx = useMemo(() => {
     return canvas?.getContext('2d')

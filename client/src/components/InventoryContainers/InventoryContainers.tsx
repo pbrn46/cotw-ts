@@ -1,14 +1,14 @@
 import React from 'react'
-import { useSelector } from '../../redux/store'
+import { useAppSelector } from '../../redux/store'
 import './InventoryContainers.css'
 import { getTilesAt, inBounds } from '../../lib/mapUtil'
 import ContainerWindow from '../ContainerWindow'
 
 
 export default function InventoryBags() {
-  const pack = useSelector(state => state.inventory.pack)
-  const heroPos = useSelector(state => state.hero.pos)
-  const floorItemTiles = useSelector(state =>
+  const pack = useAppSelector(state => state.inventory.pack)
+  const heroPos = useAppSelector(state => state.hero.pos)
+  const floorItemTiles = useAppSelector(state =>
     inBounds(heroPos, state.currentMap.size)
       ? getTilesAt(state.currentMap.layers.items, heroPos)
       : [])

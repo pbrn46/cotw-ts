@@ -1,13 +1,15 @@
-import { combineReducers } from '@reduxjs/toolkit'
+import { combineReducers } from "@reduxjs/toolkit"
 
-import currentMap from './currentMap'
-import config from './config'
-import hero from './hero'
-import messages from './messages'
-import inventory from './inventory'
+import currentMap from "./currentMap"
+import command from "./command"
+import config from "./config"
+import hero from "./hero"
+import messages from "./messages"
+import inventory from "./inventory"
 
 
 const rootReducer = combineReducers({
+  command,
   config,
   currentMap,
   hero,
