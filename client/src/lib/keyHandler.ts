@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { useHistory } from "react-router-dom"
-import { useDispatch } from "../redux/store"
+import { useAppSelector, useDispatch } from "../redux/store"
 import { heroWalkByDirection, heroSprintByDirection, pickupItem } from "../redux/reducers/hero"
 import { debugTest1 } from "../redux/reducers/debug"
 import { setPendingCommand } from "../redux/reducers/command"
@@ -92,9 +92,26 @@ const getInventoryKeyHandlers: GetKeyHandlersFn = (dispatch, history) => {
   }
 }
 
+const getCommandKeyHandlers: GetKeyHandlersFn = (dispatch, history) => {
+  return {
+    // "ArrowRight": e => {
+    //   if (e.shiftKey) {
+    //     dispatch(debugTest1())
+    //     return true
+    //   }
+    //   return false
+    // },
+    "Escape": e => {
+      dispatch(setPendingCommand(null))
+      return true
+    },
+  }
+}
+
 export function useKeyHandler(screen: KeyHandlerScreen) {
   const dispatch = useDispatch()
   const history = useHistory()
+  const pendingCommand = useAppSelector(state => state.command.pendingCommand)
 
   useEffect(() => {
     // Keyboard handlers. Return true if handled, or false to propogate
@@ -105,7 +122,11 @@ export function useKeyHandler(screen: KeyHandlerScreen) {
         break
       case "home":
       default:
-        handlers = getHomeKeyHandlers(dispatch, history)
+        if (pendingCommand) {
+          handlers = getCommandKeyHandlers(dispatch, history)
+        } else {
+          handlers = getHomeKeyHandlers(dispatch, history)
+        }
         break
     }
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -121,6 +142,6 @@ export function useKeyHandler(screen: KeyHandlerScreen) {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [dispatch, history, screen])
+  }, [dispatch, history, pendingCommand, screen])
   return null
 }
