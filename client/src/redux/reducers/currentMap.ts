@@ -2,7 +2,7 @@ import { PayloadAction, createSlice, createSelector } from '@reduxjs/toolkit'
 import { RootState } from './reducers'
 import { tilePxSizeSelector } from './config'
 import { home } from '../../maps'
-import { getSurroundingPoses, getBlankMapState, make2dArray, tilesAtPos, inBounds, Size, makeTile, makeItemTile } from '../../lib/mapUtil'
+import { getSurroundingPoses, getBlankMapState, make2dArray, tilesAtPos, inBounds, Size, makeTile, makeItemTile, MapState } from '../../lib/mapUtil'
 import { AppThunk } from '../store'
 import { getTilemapDataByKey, getTileIdByKey } from '../../lib/tilemap'
 

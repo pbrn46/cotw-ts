@@ -49,12 +49,6 @@ type Layers = {
 
 type Discovered = boolean[][]
 
-type MapState = {
-  size: Size,
-  layers: Layers,
-  discovered: Discovered,
-}
-
 type Severity = "normal" | "warning" | "danger"
 type Message = {
   message: string

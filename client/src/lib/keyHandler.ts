@@ -1,15 +1,15 @@
 import { useEffect } from "react"
 import { useHistory } from "react-router-dom"
-import { useAppSelector, useDispatch } from "../redux/store"
+import { useAppSelector, useAppDispatch } from "../redux/store"
 import { heroWalkByDirection, heroSprintByDirection, pickupItem } from "../redux/reducers/hero"
 import { debugTest1 } from "../redux/reducers/debug"
-import { setPendingCommand } from "../redux/reducers/command"
+import { cancelPendingCommand, startCommand } from "../redux/reducers/command"
 
 
 type KeyHandlerScreen = "home" | "inventory"
 
 type KeyHandlers = Record<string, ((e: KeyboardEvent) => boolean) | undefined>
-type GetKeyHandlersFn = (dispatch: ReturnType<typeof useDispatch>,
+type GetKeyHandlersFn = (dispatch: ReturnType<typeof useAppDispatch>,
   history: ReturnType<typeof useHistory>) => KeyHandlers
 
 const getHomeKeyHandlers: GetKeyHandlersFn = (dispatch, history) => {
@@ -70,7 +70,7 @@ const getHomeKeyHandlers: GetKeyHandlersFn = (dispatch, history) => {
       return true
     },
     "c": e => {
-      dispatch(setPendingCommand("closeDoor"))
+      dispatch(startCommand("closeDoor"))
       return true
     }
   }
@@ -102,14 +102,14 @@ const getCommandKeyHandlers: GetKeyHandlersFn = (dispatch, history) => {
     //   return false
     // },
     "Escape": e => {
-      dispatch(setPendingCommand(null))
+      dispatch(cancelPendingCommand())
       return true
     },
   }
 }
 
 export function useKeyHandler(screen: KeyHandlerScreen) {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const history = useHistory()
   const pendingCommand = useAppSelector(state => state.command.pendingCommand)
 

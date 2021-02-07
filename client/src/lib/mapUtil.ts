@@ -4,6 +4,12 @@ import { TilemapKeys, getTilemapDataByKey, getTilemapDataById } from './tilemap'
 import { ItemKeys, makeItemByKey } from './items'
 
 
+export type MapState = {
+  size: Size,
+  layers: Layers,
+  discovered: Discovered,
+}
+
 export function Pos(x: number, y: number): Pos {
   return { x, y }
 }
@@ -324,4 +330,12 @@ export function incrementPosByDirection(pos: Pos, direction: Direction, incremen
     pos.x + dx,
     pos.y + dy
   )
+}
+
+/** Returns the center pixel position from a top left pixel position */
+export function centerOfTilePx(posPx: Pos, tileSize: Size) {
+  return {
+    x: posPx.x + (tileSize.width / 2),
+    y: posPx.y + (tileSize.height / 2),
+  }
 }

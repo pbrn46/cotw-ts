@@ -1,4 +1,4 @@
-import { make2dArray, fillRemaining, tilesToLayer, mergeLayers, makeTile, Pos, makeTileByKey } from "../lib/mapUtil"
+import { make2dArray, fillRemaining, tilesToLayer, mergeLayers, makeTile, Pos, makeTileByKey, MapState } from "../lib/mapUtil"
 import { genCastle } from "../lib/generators"
 import { makeItemByKey } from "../lib/items"
 

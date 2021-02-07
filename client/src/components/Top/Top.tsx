@@ -1,12 +1,12 @@
 import React, { useCallback } from 'react'
 import { Button, ButtonGroup } from '@material-ui/core'
-import { useDispatch } from '../../redux/store'
+import { useAppDispatch } from '../../redux/store'
 import { cycleShroudMode } from '../../redux/reducers/config'
 import { debugTest1 } from "../../redux/reducers/debug"
 
 
 export default function Top() {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
 
   const handleTestClick = useCallback(() => {
     dispatch(debugTest1())

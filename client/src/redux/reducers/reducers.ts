@@ -1,8 +1,9 @@
 import { combineReducers } from "@reduxjs/toolkit"
 
-import currentMap from "./currentMap"
 import command from "./command"
 import config from "./config"
+import currentMap from "./currentMap"
+import cursor from "./cursor"
 import hero from "./hero"
 import messages from "./messages"
 import inventory from "./inventory"
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   command,
   config,
   currentMap,
+  cursor,
   hero,
   messages,
   inventory,
