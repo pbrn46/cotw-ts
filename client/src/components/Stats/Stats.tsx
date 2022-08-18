@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react'
-import { Grid } from '@material-ui/core'
 import { useAppSelector } from '../../redux/store'
 import moment from 'moment'
 
@@ -18,17 +17,17 @@ export default function Stats() {
 
 
   return <div style={{ padding: 10 }}>
-    <Grid container>
-      <Grid item xs={6}>HP</Grid>
-      <Grid item xs={6}>{stats.hp} ({stats.hpMax})</Grid>
-      <Grid item xs={6}>Mana</Grid>
-      <Grid item xs={6}>{stats.mp} ({stats.mpMax})</Grid>
-      <Grid item xs={6}>Speed</Grid>
-      <Grid item xs={6}>{stats.speed}% / {stats.speedMax}%</Grid>
-      <Grid item xs={6}>Time</Grid>
-      <Grid item xs={6}>{duration}</Grid>
-      <Grid item xs={6}>Location</Grid>
-      <Grid item xs={6}>Somewhere</Grid>
-    </Grid>
+    <div className="grid grid-cols-2">
+      <div>HP</div>
+      <div>{stats.hp} ({stats.hpMax})</div>
+      <div>Mana</div>
+      <div>{stats.mp} ({stats.mpMax})</div>
+      <div>Speed</div>
+      <div>{stats.speed}% / {stats.speedMax}%</div>
+      <div>Time</div>
+      <div>{duration}</div>
+      <div>Location</div>
+      <div>Somewhere</div>
+    </div>
   </div>
 }

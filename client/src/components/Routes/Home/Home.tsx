@@ -1,5 +1,4 @@
 import React from 'react'
-import { Container } from '@material-ui/core'
 import WorldView from '../../WorldView'
 import Bottom from '../../Bottom'
 import Top from '../../Top'
@@ -8,17 +7,17 @@ import { useKeyHandler } from '../../../lib/keyHandler'
 
 export default function Home() {
   useKeyHandler("home")
-  return <Container style={{ height: "100%" }}>
-    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+  return <div className="container mx-auto h-full">
+    <div className="flex flex-col h-full">
       <div>
         <Top />
       </div>
-      <div style={{ flexGrow: 1 }}>
+      <div className="grow">
         <WorldView />
       </div>
       <div>
         <Bottom />
       </div>
     </div>
-  </Container>
+  </div>
 }

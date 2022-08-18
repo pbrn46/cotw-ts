@@ -1,16 +1,15 @@
 import React from 'react'
-import { Grid } from '@material-ui/core'
 import Stats from '../Stats'
 import Messages from '../Messages'
 
 
 export default function Bottom() {
-  return <Grid container>
-    <Grid item xs={9}>
+  return <div className="grid grid-cols-12">
+    <div className="col-span-9">
       <Messages />
-    </Grid>
-    <Grid item xs={3}>
+    </div>
+    <div className="col-span-3">
       <Stats />
-    </Grid>
-  </Grid>
+    </div>
+  </div>
 }

@@ -1,3 +1,46 @@
-html, body, div#root, div.App {
-  height: 100%;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  div#root,
+  div.App {
+    height: 100%;
+  }
+}
+
+@layer components {
+  .button-group {
+    @apply border rounded inline-flex divide-x;
+  }
+  .button-group > * {
+    @apply px-2 py-1;
+  }
+
+  .inventory-equipped-table {
+    border-spacing: 0;
+    border-collapse: separate;
+    height: 100%;
+    width: 100%;
+  }
+
+  .inventory-equipped-table tr {
+    overflow: hidden;
+  }
+
+  .inventory-equipped-table td {
+    width: 20%;
+    max-width: 0;
+    height: 16.666%;
+    text-align: center;
+    font-size: 0.8em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    border: 1px solid black;
+    padding: 0;
+    margin: 0;
+  }
 }

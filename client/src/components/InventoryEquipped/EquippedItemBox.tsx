@@ -4,17 +4,20 @@ import CanvasTileSingle from '../CanvasTileSingle'
 
 
 type EquippedItemBoxProps = {
+  /** Label of the slot/equipment type */
   label: string
   type: EquippableType
 }
 export default function EquippedItemBox({ label, type }: EquippedItemBoxProps) {
   const itemInSlot = useAppSelector(state => state.inventory[type])
-  return <td style={{ width: "20%" }}>
+  return <td className="w-[20%]">
     {itemInSlot ? (
-      <span>
+      <div className="flex flex-col items-center">
         <CanvasTileSingle tileId={itemInSlot.tileId} />
-        <br /> {itemInSlot.label}
-      </span>
+        <span>
+          {itemInSlot.label}
+        </span>
+      </div>
     ) : label}
   </td>
 }

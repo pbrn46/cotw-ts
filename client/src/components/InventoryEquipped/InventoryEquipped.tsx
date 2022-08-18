@@ -1,11 +1,9 @@
 import React from 'react'
-
 import EquippedItemBox from './EquippedItemBox'
-import './InventoryEquipped.css'
 
 
 export default function InventoryEquipped() {
-  return <table className="InventoryEquippedTable">
+  return <table className="inventory-equipped-table">
     <tbody>
       <tr>
         <EquippedItemBox label="Armor" type="armor" />

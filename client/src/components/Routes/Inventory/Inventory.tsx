@@ -1,5 +1,4 @@
 import React from 'react'
-import { Grid, Container } from '@material-ui/core'
 
 import InventoryEquipped from '../../InventoryEquipped'
 import { useKeyHandler } from '../../../lib/keyHandler'
@@ -9,14 +8,14 @@ import InventoryContainers from '../../InventoryContainers'
 export default function Inventory() {
   useKeyHandler("inventory")
 
-  return <Container style={{ height: "100%" }}>
-    <Grid container style={{ height: "100%" }}>
-      <Grid item xs={8} sm={7} md={6} lg={5} xl={4}>
+  return <div className="container mx-auto h-full">
+    <div className="grid h-full grid-cols-12">
+      <div className="col-span-8 sm:col-span-7 md:col-span-6 lg:col-span-5 xl:col-span-4">
         <InventoryEquipped />
-      </Grid>
-      <Grid item xs={4} sm={5} md={6} lg={7} xl={8}>
+      </div>
+      <div className="col-span-4 sm:col-span-5 md:col-span-6 lg:col-span-7 xl:col-span-8">
         <InventoryContainers />
-      </Grid>
-    </Grid>
-  </Container>
+      </div>
+    </div>
+  </div>
 }

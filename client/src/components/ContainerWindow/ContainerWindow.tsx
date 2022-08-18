@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from 'react'
-import './ContainerWindow.css'
 import ContainerWindowItem from './ContainerWindowItem'
 import { useInventoryDragDropHandlers } from '../../lib/inventoryDragDrop'
 
@@ -27,9 +26,9 @@ export default function ContainerWindow({ items, container, isFloor = false }: C
 
   const label = isFloor ? "Floor" : container?.label ?? ""
 
-  return <div className="ContainerWindow">
-    <div className="ContainerWindow-Title">{label}</div>
-    <div className="ContainerWindow-Items"
+  return <div className="border border-black flex flex-col h-full">
+    <div className="text-white bg-[#000080] p-0.5 flex-shrink">{label}</div>
+    <div className="h-full overflow-y-scroll flex-grow bg-white"
       onDrop={dropHandler}
       onDragOver={dragOverHandler}
     >

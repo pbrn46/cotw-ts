@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react'
-import { Button, ButtonGroup } from '@material-ui/core'
 import { useAppDispatch } from '../../redux/store'
 import { cycleShroudMode } from '../../redux/reducers/config'
 import { debugTest1 } from "../../redux/reducers/debug"
@@ -13,31 +12,31 @@ export default function Top() {
   }, [dispatch])
 
   return <div>
-    <ButtonGroup>
-      <Button variant="outlined">Get</Button>
-      <Button variant="outlined">Free Hand</Button>
-      <Button variant="outlined">Search</Button>
-      <Button variant="outlined">Disarm</Button>
-      <Button variant="outlined">Rest</Button>
-      <Button variant="outlined">Save</Button>
-    </ButtonGroup>
-    <ButtonGroup>
-      <Button>0</Button>
-      <Button>1</Button>
-      <Button>2</Button>
-      <Button>3</Button>
-      <Button>4</Button>
-      <Button>5</Button>
-      <Button>6</Button>
-      <Button>7</Button>
-      <Button>8</Button>
-      <Button>9</Button>
-    </ButtonGroup>
-    <Button
+    <div className="button-group">
+      <button>Get</button>
+      <button>Free Hand</button>
+      <button>Search</button>
+      <button>Disarm</button>
+      <button>Rest</button>
+      <button>Save</button>
+    </div>
+    <div className="button-group">
+      <button>0</button>
+      <button>1</button>
+      <button>2</button>
+      <button>3</button>
+      <button>4</button>
+      <button>5</button>
+      <button>6</button>
+      <button>7</button>
+      <button>8</button>
+      <button>9</button>
+    </div>
+    <button
       onClick={handleTestClick}
-    >Test</Button>
-    <Button
+    >Test</button>
+    <button
       onClick={e => dispatch(cycleShroudMode())}
-    >Cycle Shroud</Button>
+    >Cycle Shroud</button>
   </div>
 }
