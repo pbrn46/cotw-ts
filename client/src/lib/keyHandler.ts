@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { useHistory } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { useAppSelector, useAppDispatch } from "../redux/store"
 import { heroWalkByDirection, heroSprintByDirection, pickupItem } from "../redux/reducers/hero"
 import { debugTest1 } from "../redux/reducers/debug"
@@ -10,9 +10,9 @@ type KeyHandlerScreen = "home" | "inventory"
 
 type KeyHandlers = Record<string, ((e: KeyboardEvent) => boolean) | undefined>
 type GetKeyHandlersFn = (dispatch: ReturnType<typeof useAppDispatch>,
-  history: ReturnType<typeof useHistory>) => KeyHandlers
+  navigate: ReturnType<typeof useNavigate>) => KeyHandlers
 
-const getHomeKeyHandlers: GetKeyHandlersFn = (dispatch, history) => {
+const getHomeKeyHandlers: GetKeyHandlersFn = (dispatch, navigate) => {
   return {
     "ArrowUp": e => {
       if (e.shiftKey) dispatch(heroSprintByDirection("up"))
@@ -62,7 +62,7 @@ const getHomeKeyHandlers: GetKeyHandlersFn = (dispatch, history) => {
       return false
     },
     "i": e => {
-      history.replace('/inventory')
+      navigate('/inventory', { replace: true })
       return true
     },
     "g": e => {
@@ -76,7 +76,7 @@ const getHomeKeyHandlers: GetKeyHandlersFn = (dispatch, history) => {
   }
 }
 
-const getInventoryKeyHandlers: GetKeyHandlersFn = (dispatch, history) => {
+const getInventoryKeyHandlers: GetKeyHandlersFn = (dispatch, navigate) => {
   return {
     "D": e => {
       if (e.shiftKey) {
@@ -86,13 +86,13 @@ const getInventoryKeyHandlers: GetKeyHandlersFn = (dispatch, history) => {
       return false
     },
     "Escape": e => {
-      history.replace('/')
+      navigate('/', { replace: true })
       return true
     },
   }
 }
 
-const getCommandKeyHandlers: GetKeyHandlersFn = (dispatch, history) => {
+const getCommandKeyHandlers: GetKeyHandlersFn = (dispatch, navigate) => {
   return {
     // "ArrowRight": e => {
     //   if (e.shiftKey) {
@@ -110,7 +110,7 @@ const getCommandKeyHandlers: GetKeyHandlersFn = (dispatch, history) => {
 
 export function useKeyHandler(screen: KeyHandlerScreen) {
   const dispatch = useAppDispatch()
-  const history = useHistory()
+  const navigate = useNavigate()
   const pendingCommand = useAppSelector(state => state.command.pendingCommand)
 
   useEffect(() => {
@@ -118,14 +118,14 @@ export function useKeyHandler(screen: KeyHandlerScreen) {
     let handlers: KeyHandlers
     switch (screen) {
       case "inventory":
-        handlers = getInventoryKeyHandlers(dispatch, history)
+        handlers = getInventoryKeyHandlers(dispatch, navigate)
         break
       case "home":
       default:
         if (pendingCommand) {
-          handlers = getCommandKeyHandlers(dispatch, history)
+          handlers = getCommandKeyHandlers(dispatch, navigate)
         } else {
-          handlers = getHomeKeyHandlers(dispatch, history)
+          handlers = getHomeKeyHandlers(dispatch, navigate)
         }
         break
     }
@@ -142,6 +142,6 @@ export function useKeyHandler(screen: KeyHandlerScreen) {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [dispatch, history, pendingCommand, screen])
+  }, [dispatch, navigate, pendingCommand, screen])
   return null
 }
